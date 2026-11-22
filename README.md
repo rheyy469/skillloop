@@ -2,99 +2,107 @@
 
 > **Navigating Ideas, Sharing Insights, Growing Together.**
 
-SkillLoop adalah aplikasi web interaktif dan responsif (Desktop & Mobile) untuk **pertukaran keahlian dua arah (*reciprocal skill exchange*)** dan kolaborasi belajar antarindividu tanpa transaksi uang. Setiap pengguna berperan sebagai *Teacher* sekaligus *Learner*: mendeklarasikan skill yang dapat diajarkan (`TEACH`) dan skill yang ingin dipelajari (`LEARN`). Sistem mencocokkan pasangan pengguna secara dua arah, menjelaskan alasan kecocokannya secara transparan, serta memfasilitasi kesepakatan pertukaran, penjadwalan sesi lintas zona waktu, ruang pesan pribadi, komunitas belajar, hingga moderasi katalog skill oleh Administrator.
+SkillLoop is a responsive, interactive web platform (Desktop & Mobile) for **reciprocal (two-way) skill exchange** and peer-to-peer learning without monetary transactions. Every user acts as both a *Teacher* and a *Learner*: declaring skills they can teach (`TEACH`) and skills they want to learn (`LEARN`). The system matches compatible pairs in both directions, transparently explains why they match, and supports collaboration agreements, cross-timezone session scheduling, private messaging, study communities, and admin catalog moderation.
 
 ---
 
-## Fitur Utama Platform (P0, P1 & P2)
+## Tech Stack & Technologies
 
-### 1. Fitur Inti Pertukaran Skill (P0)
-1. **Autentikasi, Sesi Aman, Sign Out & 1-Klik Demo Persona (`FR-001`)**:
-   - Registrasi akun baru (*Sign Up* lengkap dengan konfirmasi password), *Sign In*, *Sign Out*, dan ubah password dengan *server-side session* (`HttpOnly` cookie) yang terintegrasi langsung dengan PostgreSQL Docker.
-   - Dilengkapi tombol cepat **Sign In / Sign Up / Sign Out** di sebelah *search bar* pada header, serta *1-Click Demo Persona Switcher* (beserta opsi *Sign Out* ke mode tamu) di sidebar maupun halaman `/login`.
-2. **Profil Pengguna, Custom Profile Avatar & Indikator Kelengkapan (`FR-002`, `FR-005`)**:
-   - Pengaturan nama tampilan, username, bio, zona waktu IANA, bahasa komunikasi (`ID` / `EN`), serta kalkulasi otomatis persentase kelengkapan profil.
-   - **Custom Profile Picture (8 Avatar Karakter)**: Pemilih foto profil interaktif berbasis 8 ilustrasi karakter *built-in* di halaman `/profile` yang tersinkronisasi otomatis ke Header, Kartu Profil Dashboard, dan database PostgreSQL.
-3. **Katalog Skill Kanonis & Deklarasi Teach/Learn (`FR-003`, `FR-004`)**:
-   - Pencarian skill berdasarkan nama maupun alias terkurasi (mis. `js` → `JavaScript`, `ui/ux` → `UI/UX Design`), filter kategori, serta deklarasi peran `TEACH` / `LEARN` lengkap dengan level (`BEGINNER`, `INTERMEDIATE`, `ADVANCED`), metode preferensi belajar, dan tautan portofolio.
-4. **Mesin Reciprocal Matching Deterministik & Explainable (`FR-006`, `FR-007`, `FR-008`)**:
-   - Merekomendasikan partner dengan kecocokan timbal balik dua arah.
-   - Menghitung skor per arah (`DirectionScore = 0.70 * SkillFit + 0.20 * LevelFit + 0.10 * AvailabilityFit`) dan skor keseluruhan yang menyeimbangkan kedua arah (`OverallScore = 0.65 * min(AtoB, BtoA) + 0.35 * avg(AtoB, BtoA)`).
-   - Menampilkan kartu partner bergaya editorial yang informatif beserta *compatibility breakdown* dua arah.
-5. **Siklus Collaboration Request & Counter-Proposal (`FR-009`, `FR-010`)**:
-   - Pengajuan permintaan pertukaran skill disertai kesepakatan kurikulum (*Exchange Agreement*), aksi terima (`ACCEPT`), tolak (`REJECT`), batalkan (`CANCEL`), maupun ajukan tawaran balik (`COUNTER`).
-6. **Penjadwalan Sesi Belajar Lintas Zona Waktu & Tautan Ruang Belajar (`FR-011`, `FR-012`)**:
-   - Pengajuan jadwal (`PROPOSED`), konfirmasi jadwal (`SCHEDULED`), penjadwalan ulang (`RESCHEDULE`), penyelesaian sesi (`COMPLETED`), pembatalan (`CANCELLED`), serta ruang *Virtual Meeting* terintegrasi.
-7. **Dashboard Profil Pengguna, Monitor Aktivitas (Harian/Mingguan/Bulanan) & Pusat Notifikasi (`FR-013`, `FR-014`)**:
-   - **Kartu Profil Pengguna** lengkap di Dashboard beserta ringkasan skill, rating, bahasa, dan progres kelengkapan profil.
-   - **Monitor Aktivitas Interaktif** dengan mode **Harian (7 hari terakhir)**, **Mingguan (4 minggu terakhir)**, dan **Bulanan (6 bulan terakhir)** lengkap dengan grafik batang yang dapat diklik untuk memantau durasi belajar, sesi, request, dan milestone.
-   - Ringkasan 4 kartu *Top Reciprocal Partners of the Week*, *Exchange To-Do List*, dan *In-App Notification Center*.
-8. **Kontrol Keamanan: Blokir & Laporkan Pengguna (`FR-015`)**:
-   - Pemblokiran pengguna dan pelaporan pelanggaran langsung ke antrean moderasi Admin.
-
-### 2. Fitur Lanjutan & Ekosistem Komunitas (P1 & P2)
-9. **Pelacakan Milestone & Progress Belajar**:
-   - Pembuatan target/milestone belajar per kolaborasi dengan *progress slider* (`0%` – `100%`) dan checklist penyelesaian.
-10. **Ulasan Sesi & Reputasi Partner**:
-    - Pemberian rating bintang (`1–5`) dan ulasan tertulis pasca-sesi selesai (`COMPLETED`) yang otomatis memperbarui skor reputasi partner.
-11. **Ruang Pesan Pribadi & Berbagi Materi (`/messages`)**:
-    - Percakapan *direct message* antar-partner kolaborasi yang mendukung lampiran tautan materi/repositori belajar dan fitur laporkan pesan.
-12. **Komunitas & Kelompok Belajar (`/community`)**:
-    - Pembuatan dan partisipasi dalam *Reciprocal Study Circles* berdasarkan fokus skill dengan jadwal rutin dan tautan ruang diskusi grup.
-13. **Admin & Moderasi Berbasis Hak Akses (`/admin` — Khusus Akun Admin)**:
-    - **Pembatasan Hak Akses (`isAdmin`)**: Menu **Admin & Moderasi** di sidebar serta seluruh endpoint `/api/v1/admin/*` hanya dapat diakses oleh akun yang memiliki hak akses Administrator (**Raka Pratama — `raka@demo.skillloop.id`** atau email berawalan `admin@...`). Akun member biasa tidak melihat menu Admin di sidebar dan akan diblokir oleh halaman *Restricted Access* jika membuka `/admin`.
-    - **Manajemen & Hapus Katalog Skill Kanonis**: Admin dapat menambahkan skill kanonis baru (`POST /api/v1/admin/skills`) maupun **menghapus skill dari katalog kanonis (`DELETE /api/v1/admin/skills/:skillId`)** apabila ada skill yang tidak sengaja ditambahkan, lengkap dengan fitur pencarian dan filter kategori.
-    - **Moderasi Laporan & Status Akun**: Admin dapat meninjau laporan (`RESOLVED` / `DISMISSED`) serta menangguhkan atau mengaktifkan kembali akun pengguna (`Suspend` / `Activate`).
-14. **Desain Responsif (Desktop & Mobile) & Bilingual (`ID` / `EN`)**:
-    - Menggunakan tata letak *Left Vertical Sidebar* pada desktop, *Drawer Menu* + *Fixed Bottom Navigation Bar* saat dibuka dari HP, *Footer* interaktif, latar belakang *notebook grid* dengan ruang kerja hangat (`#FAF1E6`), ilustrasi vektor SVG *built-in*, serta *Interactive Local Fallback Store* sehingga seluruh menu tetap berfungsi penuh meskipun server database sedang luring.
+| Layer | Technologies Used |
+|---|---|
+| **Frontend (`apps/web`)** | React 18, TypeScript, Vite 6, React Router v6, Tailwind CSS 3, PostCSS, Autoprefixer, Lucide React |
+| **Backend (`apps/api`)** | Node.js (>= 20), Express, TypeScript, `tsx`, Zod (validation), `bcryptjs` (password hashing), Helmet, CORS, `express-rate-limit`, `cookie-parser`, `dotenv` |
+| **Database & ORM (`prisma/`)** | PostgreSQL 17, Prisma ORM & Prisma Client (plus an automatic in-memory fallback store for DB-less local dev) |
+| **Monorepo & Tooling** | npm Workspaces (`apps/*`, `packages/*`), `@skillloop/shared` (shared types & constants), `concurrently` |
+| **Testing & Quality** | Vitest, Supertest, TypeScript (`tsc --noEmit`) |
+| **Containers & Deployment** | Docker (`node:20-alpine` & `postgres:17-alpine`), Docker Compose, Vercel (`apps/web/vercel.json` SPA & API rewrite rules) |
 
 ---
 
-## Tech Stack & Struktur Monorepo
+## Core Platform Features (P0, P1 & P2)
 
-- **Frontend (`apps/web`)**: React 18 + Vite + TypeScript + Tailwind CSS + React Router + Lucide Icons
-- **Backend (`apps/api`)**: Node.js + Express + TypeScript + Zod + Bcrypt
-- **Shared (`packages/shared`)**: Tipe, enum, dan konstanta bersama
-- **Database & ORM (`prisma/`)**: PostgreSQL 17 + Prisma ORM (dengan *automatic in-memory fallback* & *client interactive store*)
-- **Testing**: Vitest + Supertest
+### 1. Core Skill Exchange Features (P0)
+1. **Authentication, Secure Sessions, Sign Out & 1-Click Demo Personas (`FR-001`)**:
+   - Account registration (*Sign Up* with password confirmation), *Sign In*, *Sign Out*, and password updates backed by server-side sessions (`HttpOnly` cookies) integrated with PostgreSQL.
+   - Quick **Sign In / Sign Up / Sign Out** controls beside the header search bar, plus a *1-Click Demo Persona Switcher* (and *Sign Out* to guest mode) in the sidebar and on `/login`.
+2. **User Profile, Custom Profile Avatars & Completeness Indicator (`FR-002`, `FR-005`)**:
+   - Configurable display name, username, bio, IANA timezone, preferred communication language (`ID` / `EN`), and automatic profile completeness percentage calculation.
+   - **Custom Profile Picture (8 Character Avatars)**: Interactive selector featuring 8 built-in illustrated characters on `/profile`, synced across the header, dashboard profile card, and PostgreSQL.
+3. **Canonical Skill Catalog & Teach/Learn Declarations (`FR-003`, `FR-004`)**:
+   - Skill search by canonical name or curated aliases (e.g., `js` → `JavaScript`, `ui/ux` → `UI/UX Design`), category filters, and `TEACH` / `LEARN` declarations with proficiency/target levels (`BEGINNER`, `INTERMEDIATE`, `ADVANCED`), learning method preferences, and portfolio links.
+4. **Deterministic & Explainable Reciprocal Matching Engine (`FR-006`, `FR-007`, `FR-008`)**:
+   - Recommends partners with mutual two-way compatibility.
+   - Computes directional scores (`DirectionScore = 0.70 * SkillFit + 0.20 * LevelFit + 0.10 * AvailabilityFit`) and a balanced overall score (`OverallScore = 0.65 * min(AtoB, BtoA) + 0.35 * avg(AtoB, BtoA)`).
+   - Displays editorial-style partner cards with a transparent two-way compatibility breakdown.
+5. **Collaboration Request Lifecycle & Counter-Proposals (`FR-009`, `FR-010`)**:
+   - Send collaboration requests with an *Exchange Agreement*, and handle `ACCEPT`, `REJECT`, `CANCEL`, or `COUNTER` proposals.
+6. **Cross-Timezone Session Scheduling & Virtual Meeting Links (`FR-011`, `FR-012`)**:
+   - Manage session states (`PROPOSED`, `SCHEDULED`, `RESCHEDULE`, `COMPLETED`, `CANCELLED`) with cross-timezone display and virtual learning room links.
+7. **User Dashboard, Activity Monitor (Daily/Weekly/Monthly) & Notification Center (`FR-013`, `FR-014`)**:
+   - **User Profile Card** on the Dashboard summarizing skills, rating, language, and profile completeness progress.
+   - **Interactive Activity Monitor** with **Daily (last 7 days)**, **Weekly (last 4 weeks)**, and **Monthly (last 6 months)** modes and clickable bar charts tracking learning duration, sessions, requests, and milestones.
+   - Highlights *Top Reciprocal Partners of the Week*, *Exchange To-Do List*, and an *In-App Notification Center*.
+8. **Safety Controls: Block & Report Users (`FR-015`)**:
+   - Block users and submit violation reports directly to the Admin moderation queue.
+
+### 2. Advanced Features & Community Ecosystem (P1 & P2)
+9. **Milestone & Learning Progress Tracking**:
+   - Per-collaboration learning milestones with a `0%`–`100%` progress slider and completion checklist.
+10. **Session Reviews & Partner Reputation**:
+    - Star ratings (`1–5`) and written reviews after `COMPLETED` sessions that automatically update partner reputation scores.
+11. **Private Messaging & Learning Material Sharing (`/messages`)**:
+    - Direct messages between collaboration partners supporting attached resource/repository links and message reporting.
+12. **Communities & Study Circles (`/community`)**:
+    - Create and join *Reciprocal Study Circles* organized by skill focus with recurring schedules and group discussion links.
+13. **Role-Based Admin & Moderation (`/admin` — Admin Accounts Only)**:
+    - **Access Control (`isAdmin`)**: The **Admin & Moderation** sidebar menu and all `/api/v1/admin/*` endpoints are restricted to Administrator accounts (**Raka Pratama — `raka@demo.skillloop.id`** or `admin@...` emails). Regular members do not see the Admin menu and are shown a *Restricted Access* page if visiting `/admin`.
+    - **Canonical Skill Catalog Management**: Admins can add new canonical skills (`POST /api/v1/admin/skills`) or delete canonical skills (`DELETE /api/v1/admin/skills/:skillId`), complete with search and category filtering.
+    - **Report Moderation & Account Status**: Review reports (`RESOLVED` / `DISMISSED`) and `Suspend` / `Activate` user accounts.
+14. **Responsive Design (Desktop & Mobile) & Bilingual UI (`ID` / `EN`)**:
+    - *Left Vertical Sidebar* on desktop, *Drawer Menu* + *Fixed Bottom Navigation Bar* on mobile, interactive footer, warm notebook-grid workspace (`#FAF1E6`), built-in SVG illustrations, and an *Interactive Local Fallback Store* so all flows remain testable even when the database server is offline.
+
+---
+
+## Monorepo Structure
 
 ```text
 skillloop/
 ├── apps/
 │   ├── api/                 # Express + TypeScript REST API (/api/v1)
-│   └── web/                 # React + Vite + Tailwind CSS Frontend
+│   └── web/                 # React + Vite + Tailwind CSS Frontend (+ vercel.json)
 ├── packages/
-│   └── shared/              # Shared TypeScript types & constants
+│   └── shared/              # Shared TypeScript types & constants (@skillloop/shared)
 ├── prisma/
 │   ├── schema.prisma        # Relational PostgreSQL schema
 │   └── migrations/          # SQL migrations
 ├── docs/
+│   ├── API.md
+│   ├── DEPLOYMENT.md
 │   ├── PRD_SkillLoop.md
-│   ├── SkillLoop_AI_Agent_Brief.md
-│   └── API.md
-├── Dockerfile               # Full-stack multi-stage container build
+│   └── SkillLoop_AI_Agent_Brief.md
+├── Dockerfile               # Full-stack container build
 ├── docker-compose.yml       # PostgreSQL 17 & optional fullstack profile
-├── .env.example
-└── package.json
+├── .env.example             # Environment variable template
+└── package.json             # Root npm workspaces & scripts
 ```
 
 ---
 
-## Cara Menjalankan Proyek
+## Getting Started
 
-### 1. Prasyarat
-- **Node.js** `>= 20.x` dan **npm** `>= 10.x`
-- **Docker Desktop** *(Opsional — untuk menjalankan container PostgreSQL lokal)*
+### 1. Prerequisites
+- **Node.js** `>= 20.x` and **npm** `>= 10.x`
+- **Docker Desktop** *(Optional — for running a local PostgreSQL container)*
 
-> **Catatan Kemudahan Development:** Jika Docker Desktop atau PostgreSQL belum dijalankan, backend (`apps/api`) secara otomatis menggunakan *in-memory development store* dan frontend (`apps/web`) dilengkapi *interactive state store* yang sudah terisi katalog skill, sesi, pesan, komunitas, serta 5 akun demo sehingga seluruh fitur dapat langsung diuji tanpa konfigurasi tambahan.
+> **Development Convenience Note:** If Docker Desktop or PostgreSQL is not running, `apps/api` automatically falls back to an *in-memory development store*, and `apps/web` includes an *interactive state store* pre-populated with the skill catalog, sessions, messages, communities, and 5 demo accounts so all features can be tested without extra setup.
 
-### 2. Instalasi & Konfigurasi Environment
+### 2. Installation & Environment Setup
 ```bash
 cp .env.example .env
 npm install
 ```
 
-### 3. Menjalankan PostgreSQL dengan Docker Compose (Direkomendasikan)
+### 3. Run PostgreSQL with Docker Compose (Recommended)
 ```bash
 docker compose up -d
 npm run db:generate
@@ -102,23 +110,28 @@ npm run db:migrate
 npm run db:seed
 ```
 
-*(Opsional)* Jika ingin menjalankan seluruh stack (**PostgreSQL + Backend API + Frontend Web**) langsung di dalam container Docker:
+*(Optional)* To run the entire stack (**PostgreSQL + Backend API + Frontend Web**) inside Docker containers:
 ```bash
 docker compose --profile fullstack up -d --build
-# Buka aplikasi di http://localhost:4000
+# Open the app at http://localhost:4000
 ```
 
-### 4. Menjalankan Aplikasi (Backend + Frontend)
-Jalankan di dua terminal terpisah:
+### 4. Run the Application (Backend + Frontend)
+Run both apps concurrently from the root directory:
 ```bash
-# Terminal 1 — Jalankan API Server (http://localhost:4000/api/v1)
+npm run dev
+```
+
+Or run them in two separate terminals:
+```bash
+# Terminal 1 — API Server (http://localhost:4000/api/v1)
 npm run dev:api
 
-# Terminal 2 — Jalankan Web Frontend (http://localhost:5173)
+# Terminal 2 — Web Frontend (http://localhost:5173)
 npm run dev:web
 ```
 
-### 5. Pengujian (Typecheck, Lint, Unit & Integration Tests, Build)
+### 5. Verification (Typecheck, Lint, Tests, Build)
 ```bash
 npm run typecheck
 npm run lint
@@ -128,15 +141,14 @@ npm run build
 
 ---
 
-## Akun Demo & Hak Akses (1-Klik Login)
+## Demo Accounts & Access Levels (1-Click Login)
 
-Seluruh akun demo menggunakan password: `DemoSkillLoop123!` dan dapat dipilih langsung melalui dropdown **Akun Demo Cepat (1-Klik)** di sidebar maupun di halaman `/login`:
+All demo accounts share the password `DemoSkillLoop123!` and can be selected directly from the **Quick Demo Account (1-Click)** switcher in the sidebar or on `/login`:
 
-| Akun | Email | Hak Akses | Can Teach | Want to Learn | Keterangan Demo |
+| Account | Email | Role | Can Teach | Want to Learn | Notes |
 |---|---|---|---|---|---|
-| **Raka Pratama** | `raka@demo.skillloop.id` | **Administrator (`isAdmin: true`)** | JavaScript, HTML & CSS | UI/UX Design, Figma | Memiliki akses penuh ke menu **Admin & Moderasi** (kelola & hapus katalog skill, moderasi laporan, suspend user) |
-| **Nadia Lestary (Naya)** | `naya@demo.skillloop.id` | Member (`isAdmin: false`) | UI/UX Design, Figma | JavaScript, HTML & CSS | Reciprocal Match 96% dengan Raka & Dimas |
-| **Evan Dimas Lee** | `dimas@demo.skillloop.id` | Member (`isAdmin: false`) | Public Speaking, HTML & CSS | Figma, JavaScript | Reciprocal Match dengan Naya & Raka |
-| **Stefy Alya Catlyna** | `alya@demo.skillloop.id` | Member (`isAdmin: false`) | Python, SQL & PostgreSQL | React, JavaScript | Reciprocal Match 98% dengan Farhan |
-| **Farhan Akbar** | `farhan@demo.skillloop.id` | Member (`isAdmin: false`) | React, TypeScript | Python, SQL & PostgreSQL | Reciprocal Match 98% dengan Alya |
-
+| **Raka Pratama** | `raka@demo.skillloop.id` | **Administrator (`isAdmin: true`)** | JavaScript, HTML & CSS | UI/UX Design, Figma | Full access to **Admin & Moderation** (manage/delete skill catalog, review reports, suspend users) |
+| **Nadia Lestary (Naya)** | `naya@demo.skillloop.id` | Member (`isAdmin: false`) | UI/UX Design, Figma | JavaScript, HTML & CSS | 96% Reciprocal Match with Raka & Dimas |
+| **Evan Dimas Lee** | `dimas@demo.skillloop.id` | Member (`isAdmin: false`) | Public Speaking, HTML & CSS | Figma, JavaScript | Reciprocal Match with Naya & Raka |
+| **Stefy Alya Catlyna** | `alya@demo.skillloop.id` | Member (`isAdmin: false`) | Python, SQL & PostgreSQL | React, JavaScript | 98% Reciprocal Match with Farhan |
+| **Farhan Akbar** | `farhan@demo.skillloop.id` | Member (`isAdmin: false`) | React, TypeScript | Python, SQL & PostgreSQL | 98% Reciprocal Match with Alya |
