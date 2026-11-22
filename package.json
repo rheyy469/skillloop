@@ -1,0 +1,30 @@
+{
+  "name": "skillloop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SkillLoop — Reciprocal Skill Exchange Platform",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n API,WEB -c blue,green \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev --workspace=@skillloop/api",
+    "dev:web": "npm run dev --workspace=@skillloop/web",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npx prisma generate --schema=prisma/schema.prisma",
+    "db:migrate": "npx prisma migrate dev --schema=prisma/schema.prisma",
+    "db:push": "npx prisma db push --schema=prisma/schema.prisma",
+    "db:seed": "npm run seed --workspace=@skillloop/api",
+    "db:studio": "npx prisma studio --schema=prisma/schema.prisma"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.5"
+  }
+}
