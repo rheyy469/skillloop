@@ -217,7 +217,7 @@ let prismaInstance: PrismaClient | null = null;
 let storageMode: 'postgres' | 'memory' | null = null;
 let lastPostgresProbeAt = 0;
 
-function checkTcpPort(host: string, port: number, timeoutMs = 600): Promise<boolean> {
+function checkTcpPort(host: string, port: number, timeoutMs = 5000): Promise<boolean> {
   return new Promise((resolve) => {
     const socket = new net.Socket();
     let settled = false;
@@ -266,12 +266,16 @@ export async function resolveStorageMode(): Promise<'postgres' | 'memory'> {
     // Keep defaults
   }
 
-  const reachable = await checkTcpPort(host, port);
+  const probeTimeoutMs = process.env.NODE_ENV === 'production' ? 5000 : 1000;
+  const reachable = await checkTcpPort(host, port, probeTimeoutMs);
   if (reachable) {
     prismaInstance = prismaInstance || new PrismaClient();
+    if (process.env.NODE_ENV === 'production') {
+      await prismaInstance.$queryRaw`SELECT 1`;
+    }
     if (storageMode === 'memory') {
       console.log(
-        `[SkillLoop DB] PostgreSQL di ${host}:${port} kini aktif! Beralih otomatis ke Docker PostgreSQL.`
+        `[SkillLoop DB] PostgreSQL di ${host}:${port} kini aktif! Beralih otomatis ke PostgreSQL.`
       );
     }
     storageMode = 'postgres';
@@ -298,6 +302,13 @@ export function getPrismaClient(): PrismaClient {
     prismaInstance = new PrismaClient();
   }
   return prismaInstance;
+}
+
+export async function disconnectDatabase(): Promise<void> {
+  if (prismaInstance) {
+    await prismaInstance.$disconnect();
+    prismaInstance = null;
+  }
 }
 
 class MemoryDatabase {

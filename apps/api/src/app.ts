@@ -7,6 +7,8 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { apiRouter } from './routes/api.routes.js';
 import { errorHandler } from './middleware/error.middleware.js';
+import { parseAllowedOrigins } from './config/env.js';
+import { AppError } from './utils/errors.js';
 
 export function createApp() {
   const app = express();
@@ -14,11 +16,7 @@ export function createApp() {
   // Required for Secure cookies & rate-limiting behind reverse proxies (Railway, Render, Nginx, etc.)
   app.set('trust proxy', 1);
 
-  const rawOrigins = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
-  const allowedOrigins = rawOrigins
-    .split(',')
-    .map((o) => o.trim())
-    .filter(Boolean);
+  const allowedOrigins = parseAllowedOrigins(process.env.FRONTEND_ORIGIN);
 
   app.use(
     helmet({
@@ -32,13 +30,26 @@ export function createApp() {
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin) || isLocalDevOrigin(origin)) {
+        const normalizedOrigin = origin?.replace(/\/+$/, '');
+        if (
+          !normalizedOrigin ||
+          allowedOrigins.includes(normalizedOrigin) ||
+          isLocalDevOrigin(normalizedOrigin)
+        ) {
           callback(null, true);
         } else {
-          callback(new Error('Origin not allowed by CORS'));
+          callback(
+            new AppError(
+              403,
+              'CORS_ORIGIN_DENIED',
+              `Origin "${normalizedOrigin}" tidak diizinkan oleh kebijakan CORS.`
+            )
+          );
         }
       },
-      credentials: true
+      credentials: true,
+      methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization']
     })
   );
   app.use(express.json({ limit: '64kb' }));
@@ -60,6 +71,17 @@ export function createApp() {
         return;
       }
       res.sendFile(path.join(webDistDir, 'index.html'));
+    });
+  } else {
+    app.get('/', (_req, res) => {
+      res.json({
+        data: {
+          service: 'skillloop-api',
+          status: 'ok',
+          apiBase: '/api/v1',
+          health: '/api/v1/health'
+        }
+      });
     });
   }
 

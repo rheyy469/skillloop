@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { repository } from '../lib/repository.js';
 import { AppError } from '../utils/errors.js';
 import { UserRecord } from '../lib/store.js';
+import { getSessionSecret } from '../config/env.js';
 
 export const SESSION_COOKIE_NAME = 'skillloop_sid';
 const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -17,7 +18,7 @@ declare global {
 }
 
 export function hashSessionToken(rawToken: string): string {
-  const secret = process.env.SESSION_SECRET || 'skillloop-default-dev-secret';
+  const secret = getSessionSecret();
   return crypto.createHmac('sha256', secret).update(rawToken).digest('hex');
 }
 
@@ -26,6 +27,30 @@ function isHttpsRequest(req?: Request): boolean {
   const forwardedProto = req.headers['x-forwarded-proto'];
   const proto = Array.isArray(forwardedProto) ? forwardedProto[0] : forwardedProto;
   return Boolean(req.secure || proto === 'https' || process.env.COOKIE_SECURE === 'true');
+}
+
+function resolveCookieSecurity(req?: Request): {
+  secure: boolean;
+  sameSite: 'lax' | 'none' | 'strict';
+} {
+  const https = isHttpsRequest(req);
+  const envSameSite = (process.env.COOKIE_SAME_SITE || 'auto').trim().toLowerCase();
+
+  if (envSameSite === 'none') {
+    return { secure: true, sameSite: 'none' };
+  }
+  if (envSameSite === 'strict') {
+    return { secure: https, sameSite: 'strict' };
+  }
+  if (envSameSite === 'lax') {
+    return { secure: https, sameSite: 'lax' };
+  }
+
+  // Auto mode: cross-origin HTTPS in production (Vercel <-> Railway) requires SameSite=None + Secure
+  if (process.env.NODE_ENV === 'production' && https) {
+    return { secure: true, sameSite: 'none' };
+  }
+  return { secure: https, sameSite: 'lax' };
 }
 
 export async function issueSessionCookie(
@@ -43,10 +68,11 @@ export async function issueSessionCookie(
     expiresAt
   });
 
+  const { secure, sameSite } = resolveCookieSecurity(req);
   res.cookie(SESSION_COOKIE_NAME, rawToken, {
     httpOnly: true,
-    secure: isHttpsRequest(req),
-    sameSite: 'lax',
+    secure,
+    sameSite,
     expires: expiresAt,
     path: '/'
   });
@@ -55,10 +81,11 @@ export async function issueSessionCookie(
 }
 
 export function clearSessionCookie(res: Response, req?: Request): void {
+  const { secure, sameSite } = resolveCookieSecurity(req);
   res.clearCookie(SESSION_COOKIE_NAME, {
     httpOnly: true,
-    secure: isHttpsRequest(req),
-    sameSite: 'lax',
+    secure,
+    sameSite,
     path: '/'
   });
 }

@@ -351,20 +351,36 @@ export interface DashboardDto {
   activitySummary?: ActivitySummaryDto;
 }
 
-const rawEnvApiBase =
-  (import.meta as unknown as { env?: { VITE_API_BASE_URL?: string } }).env
-    ?.VITE_API_BASE_URL || '';
+const viteEnv =
+  (
+    import.meta as unknown as {
+      env?: {
+        DEV?: boolean;
+        VITE_API_URL?: string;
+        VITE_API_BASE_URL?: string;
+        VITE_ENABLE_OFFLINE_FALLBACK?: string;
+      };
+    }
+  ).env || {};
 
-// Use relative `/api/v1` (Vite proxy / same-origin) so cookies work across localhost and mobile LAN access
-const API_BASE =
-  rawEnvApiBase &&
-  !(
-    typeof window !== 'undefined' &&
-    window.location.hostname !== 'localhost' &&
-    rawEnvApiBase.includes('localhost')
-  )
-    ? rawEnvApiBase
-    : '/api/v1';
+function resolveApiBase(): string {
+  const raw = (viteEnv.VITE_API_URL || viteEnv.VITE_API_BASE_URL || '').trim();
+  if (
+    !raw ||
+    (typeof window !== 'undefined' &&
+      window.location.hostname !== 'localhost' &&
+      window.location.hostname !== '127.0.0.1' &&
+      raw.includes('localhost'))
+  ) {
+    return '/api/v1';
+  }
+  const normalized = raw.replace(/\/+$/, '');
+  return normalized.endsWith('/api/v1') ? normalized : `${normalized}/api/v1`;
+}
+
+const API_BASE = resolveApiBase();
+const ALLOW_OFFLINE_FALLBACK =
+  Boolean(viteEnv.DEV) || viteEnv.VITE_ENABLE_OFFLINE_FALLBACK === 'true';
 
 async function requestJson<T, M = Record<string, unknown>>(
   path: string,
@@ -416,7 +432,7 @@ async function withFallback<T, M = Record<string, unknown>>(
   try {
     return await fn();
   } catch (err) {
-    if (isBackendOfflineError(err)) {
+    if (ALLOW_OFFLINE_FALLBACK && isBackendOfflineError(err)) {
       return fallbackFn();
     }
     throw err;

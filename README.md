@@ -15,7 +15,7 @@ SkillLoop is a responsive, interactive web platform (Desktop & Mobile) for **rec
 | **Database & ORM (`prisma/`)** | PostgreSQL 17, Prisma ORM & Prisma Client (plus an automatic in-memory fallback store for DB-less local dev) |
 | **Monorepo & Tooling** | npm Workspaces (`apps/*`, `packages/*`), `@skillloop/shared` (shared types & constants), `concurrently` |
 | **Testing & Quality** | Vitest, Supertest, TypeScript (`tsc --noEmit`) |
-| **Containers & Deployment** | Docker (`node:20-alpine` & `postgres:17-alpine`), Docker Compose, Vercel (`apps/web/vercel.json` SPA & API rewrite rules) |
+| **Containers & Deployment** | Docker (`node:20-alpine` & `postgres:17-alpine`), Docker Compose, Vercel (`apps/web/vercel.json`), Railway (`railway.json` + Managed PostgreSQL) |
 
 ---
 
@@ -82,7 +82,8 @@ skillloop/
 │   └── SkillLoop_AI_Agent_Brief.md
 ├── Dockerfile               # Full-stack container build
 ├── docker-compose.yml       # PostgreSQL 17 & optional fullstack profile
-├── .env.example             # Environment variable template
+├── railway.json             # Railway backend build/start/healthcheck config
+├── .env.example             # Root environment variable template
 └── package.json             # Root npm workspaces & scripts
 ```
 
@@ -138,6 +139,14 @@ npm run lint
 npm run test
 npm run build
 ```
+
+### 6. Deployment (Vercel + Railway + PostgreSQL)
+SkillLoop is configured for split monorepo deployment:
+- **Frontend (`apps/web`)** → **Vercel** (Root Directory: `apps/web`, Build: `npm run build`, Output: `dist`, Env: `VITE_API_URL`)
+- **Backend (`apps/api`)** → **Railway** (Root Directory: `.`, configured via `railway.json`, Healthcheck: `/api/v1/health`)
+- **Database** → **PostgreSQL** on **Railway** (`DATABASE_URL`)
+
+See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for the complete step-by-step manual deployment guide.
 
 ---
 

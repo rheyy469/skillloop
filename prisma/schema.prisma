@@ -66,6 +66,11 @@ model User {
   reportsSubmitted  UserReport[]           @relation("Reporter")
   reportsReceived   UserReport[]           @relation("ReportedUser")
   sessionFeedbacks  SessionFeedback[]
+  milestones        LearningMilestone[]
+  settings          UserSettings?
+  sentMessages      DirectMessage[]        @relation("SentMessages")
+  receivedMessages  DirectMessage[]        @relation("ReceivedMessages")
+  createdGroups     CommunityGroup[]       @relation("CreatedGroups")
 
   @@index([isActive])
 }
@@ -180,9 +185,11 @@ model CollaborationRequest {
 
   sender         User              @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
   recipient      User              @relation("ReceivedRequests", fields: [recipientId], references: [id], onDelete: Cascade)
-  offeredSkill   Skill?            @relation("OfferedSkill", fields: [offeredSkillId], references: [id], onDelete: SetNull)
-  requestedSkill Skill?            @relation("RequestedSkill", fields: [requestedSkillId], references: [id], onDelete: SetNull)
+  offeredSkill   Skill?              @relation("OfferedSkill", fields: [offeredSkillId], references: [id], onDelete: SetNull)
+  requestedSkill Skill?              @relation("RequestedSkill", fields: [requestedSkillId], references: [id], onDelete: SetNull)
   sessions       LearningSession[]
+  milestones     LearningMilestone[]
+  messages       DirectMessage[]
 
   @@index([senderId, status])
   @@index([recipientId, status])
@@ -276,4 +283,74 @@ model SessionFeedback {
   @@unique([sessionId, reviewerId])
   @@index([sessionId])
   @@index([reviewerId])
+}
+
+model LearningMilestone {
+  id              String   @id @default(uuid()) @db.Uuid
+  requestId       String   @db.Uuid
+  userId          String   @db.Uuid
+  title           String
+  notes           String?
+  isCompleted     Boolean  @default(false)
+  progressPercent Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  request CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  user    User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([requestId])
+}
+
+model UserSettings {
+  userId                String   @id @db.Uuid
+  notifyNewRequest      Boolean  @default(true)
+  notifyRequestAccepted Boolean  @default(true)
+  notifySessionUpdates  Boolean  @default(true)
+  notifyNewFeedback     Boolean  @default(true)
+  showTimezonePublicly  Boolean  @default(true)
+  showPortfolioPublicly Boolean  @default(true)
+  showHistoryPublicly   Boolean  @default(true)
+  interfaceLanguage     String   @default("id")
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DirectMessage {
+  id          String    @id @default(uuid()) @db.Uuid
+  requestId   String    @db.Uuid
+  senderId    String    @db.Uuid
+  recipientId String    @db.Uuid
+  body        String
+  resourceUrl String?
+  readAt      DateTime?
+  isReported  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  request   CollaborationRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  sender    User                 @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient User                 @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([requestId, createdAt])
+  @@index([recipientId, readAt])
+}
+
+model CommunityGroup {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  skillFocus   String
+  categoryName String
+  description  String
+  meetingLink  String?
+  scheduleNote String
+  creatorId    String   @db.Uuid
+  memberIds    String[]
+  createdAt    DateTime @default(now())
+
+  creator User @relation("CreatedGroups", fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@index([creatorId])
+  @@index([createdAt])
 }

@@ -1732,6 +1732,14 @@ export const repository = {
   // P1: Learning Progress Tracking & Milestones (Spec Section 8)
   // ==========================================================================
   async listUserMilestones(userId: string): Promise<LearningMilestoneRecord[]> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      return getPrismaClient().learningMilestone.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' }
+      });
+    }
+
     const items = Array.from(memoryDb.milestones.values()).filter(
       (m) => m.userId === userId
     );
@@ -1745,6 +1753,20 @@ export const repository = {
     notes?: string | null;
     progressPercent: number;
   }): Promise<LearningMilestoneRecord> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      return getPrismaClient().learningMilestone.create({
+        data: {
+          userId: input.userId,
+          requestId: input.requestId,
+          title: input.title.trim(),
+          notes: input.notes?.trim() || null,
+          isCompleted: input.progressPercent >= 100,
+          progressPercent: input.progressPercent
+        }
+      });
+    }
+
     const now = new Date();
     const rec: LearningMilestoneRecord = {
       id: crypto.randomUUID(),
@@ -1771,6 +1793,41 @@ export const repository = {
       progressPercent?: number;
     }
   ): Promise<LearningMilestoneRecord> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const prisma = getPrismaClient();
+      const existing = await prisma.learningMilestone.findUnique({
+        where: { id: milestoneId }
+      });
+      if (!existing) {
+        throw new AppError(404, 'MILESTONE_NOT_FOUND', 'Milestone tidak ditemukan.');
+      }
+      if (existing.userId !== userId) {
+        throw new AppError(403, 'FORBIDDEN', 'Tidak berhak mengubah milestone ini.');
+      }
+
+      let nextProgress =
+        input.progressPercent !== undefined ? input.progressPercent : existing.progressPercent;
+      let nextCompleted =
+        input.isCompleted !== undefined ? input.isCompleted : existing.isCompleted;
+      if (input.progressPercent !== undefined && input.progressPercent >= 100) {
+        nextCompleted = true;
+      }
+      if (input.isCompleted === true) {
+        nextProgress = 100;
+      }
+
+      return prisma.learningMilestone.update({
+        where: { id: milestoneId },
+        data: {
+          ...(input.title !== undefined ? { title: input.title.trim() } : {}),
+          ...(input.notes !== undefined ? { notes: input.notes?.trim() || null } : {}),
+          progressPercent: nextProgress,
+          isCompleted: nextCompleted
+        }
+      });
+    }
+
     const existing = memoryDb.milestones.get(milestoneId);
     if (!existing) {
       throw new AppError(404, 'MILESTONE_NOT_FOUND', 'Milestone tidak ditemukan.');
@@ -1793,6 +1850,22 @@ export const repository = {
   },
 
   async deleteMilestone(userId: string, milestoneId: string): Promise<void> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const prisma = getPrismaClient();
+      const existing = await prisma.learningMilestone.findUnique({
+        where: { id: milestoneId }
+      });
+      if (!existing) {
+        throw new AppError(404, 'MILESTONE_NOT_FOUND', 'Milestone tidak ditemukan.');
+      }
+      if (existing.userId !== userId) {
+        throw new AppError(403, 'FORBIDDEN', 'Tidak berhak menghapus milestone ini.');
+      }
+      await prisma.learningMilestone.delete({ where: { id: milestoneId } });
+      return;
+    }
+
     const existing = memoryDb.milestones.get(milestoneId);
     if (!existing) {
       throw new AppError(404, 'MILESTONE_NOT_FOUND', 'Milestone tidak ditemukan.');
@@ -1807,6 +1880,39 @@ export const repository = {
   // P1: Settings & Account Preferences (Spec Section 13)
   // ==========================================================================
   async getUserSettings(userId: string): Promise<UserSettingsRecord> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const prisma = getPrismaClient();
+      const existing = await prisma.userSettings.findUnique({ where: { userId } });
+      if (existing) {
+        return {
+          userId: existing.userId,
+          notifyNewRequest: existing.notifyNewRequest,
+          notifyRequestAccepted: existing.notifyRequestAccepted,
+          notifySessionUpdates: existing.notifySessionUpdates,
+          notifyNewFeedback: existing.notifyNewFeedback,
+          showTimezonePublicly: existing.showTimezonePublicly,
+          showPortfolioPublicly: existing.showPortfolioPublicly,
+          showHistoryPublicly: existing.showHistoryPublicly,
+          interfaceLanguage: existing.interfaceLanguage
+        };
+      }
+      const created = await prisma.userSettings.create({
+        data: { userId }
+      });
+      return {
+        userId: created.userId,
+        notifyNewRequest: created.notifyNewRequest,
+        notifyRequestAccepted: created.notifyRequestAccepted,
+        notifySessionUpdates: created.notifySessionUpdates,
+        notifyNewFeedback: created.notifyNewFeedback,
+        showTimezonePublicly: created.showTimezonePublicly,
+        showPortfolioPublicly: created.showPortfolioPublicly,
+        showHistoryPublicly: created.showHistoryPublicly,
+        interfaceLanguage: created.interfaceLanguage
+      };
+    }
+
     const existing = memoryDb.userSettings.get(userId);
     if (existing) return existing;
     const def: UserSettingsRecord = {
@@ -1828,6 +1934,26 @@ export const repository = {
     userId: string,
     patch: Partial<Omit<UserSettingsRecord, 'userId'>>
   ): Promise<UserSettingsRecord> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const saved = await getPrismaClient().userSettings.upsert({
+        where: { userId },
+        update: { ...patch },
+        create: { userId, ...patch }
+      });
+      return {
+        userId: saved.userId,
+        notifyNewRequest: saved.notifyNewRequest,
+        notifyRequestAccepted: saved.notifyRequestAccepted,
+        notifySessionUpdates: saved.notifySessionUpdates,
+        notifyNewFeedback: saved.notifyNewFeedback,
+        showTimezonePublicly: saved.showTimezonePublicly,
+        showPortfolioPublicly: saved.showPortfolioPublicly,
+        showHistoryPublicly: saved.showHistoryPublicly,
+        interfaceLanguage: saved.interfaceLanguage
+      };
+    }
+
     const current = await this.getUserSettings(userId);
     const updated: UserSettingsRecord = {
       ...current,
@@ -2131,6 +2257,27 @@ export const repository = {
   async listMessagesForRequest(
     requestId: string
   ): Promise<Array<DirectMessageRecord & { senderName: string }>> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const rows = await getPrismaClient().directMessage.findMany({
+        where: { requestId },
+        include: { sender: { select: { displayName: true } } },
+        orderBy: { createdAt: 'asc' }
+      });
+      return rows.map((m) => ({
+        id: m.id,
+        requestId: m.requestId,
+        senderId: m.senderId,
+        recipientId: m.recipientId,
+        body: m.body,
+        resourceUrl: m.resourceUrl,
+        readAt: m.readAt,
+        isReported: m.isReported,
+        createdAt: m.createdAt,
+        senderName: m.sender.displayName
+      }));
+    }
+
     const items = Array.from(memoryDb.messages.values())
       .filter((m) => m.requestId === requestId)
       .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
@@ -2153,6 +2300,32 @@ export const repository = {
     body: string;
     resourceUrl?: string | null;
   }): Promise<DirectMessageRecord & { senderName: string }> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const created = await getPrismaClient().directMessage.create({
+        data: {
+          requestId: input.requestId,
+          senderId: input.senderId,
+          recipientId: input.recipientId,
+          body: input.body.trim(),
+          resourceUrl: input.resourceUrl?.trim() || null
+        },
+        include: { sender: { select: { displayName: true } } }
+      });
+      return {
+        id: created.id,
+        requestId: created.requestId,
+        senderId: created.senderId,
+        recipientId: created.recipientId,
+        body: created.body,
+        resourceUrl: created.resourceUrl,
+        readAt: created.readAt,
+        isReported: created.isReported,
+        createdAt: created.createdAt,
+        senderName: created.sender.displayName
+      };
+    }
+
     const sender = await this.findUserById(input.senderId);
     const rec: DirectMessageRecord = {
       id: crypto.randomUUID(),
@@ -2176,7 +2349,16 @@ export const repository = {
     requestId: string,
     recipientId: string
   ): Promise<number> {
+    const mode = await resolveStorageMode();
     const now = new Date();
+    if (mode === 'postgres') {
+      const res = await getPrismaClient().directMessage.updateMany({
+        where: { requestId, recipientId, readAt: null },
+        data: { readAt: now }
+      });
+      return res.count;
+    }
+
     let count = 0;
     for (const m of memoryDb.messages.values()) {
       if (m.requestId === requestId && m.recipientId === recipientId && !m.readAt) {
@@ -2192,6 +2374,29 @@ export const repository = {
     reporterId: string,
     reason?: string
   ): Promise<DirectMessageRecord> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const prisma = getPrismaClient();
+      const existing = await prisma.directMessage.findUnique({
+        where: { id: messageId }
+      });
+      if (!existing) {
+        throw new AppError(404, 'MESSAGE_NOT_FOUND', 'Pesan tidak ditemukan.');
+      }
+      const updated = await prisma.directMessage.update({
+        where: { id: messageId },
+        data: { isReported: true }
+      });
+      await this.createReport({
+        reporterId,
+        reportedUserId: updated.senderId,
+        category: 'INAPPROPRIATE_CONTENT',
+        description:
+          reason?.trim() || `Laporan pesan pribadi: "${updated.body.slice(0, 120)}"`
+      });
+      return updated;
+    }
+
     const msg = memoryDb.messages.get(messageId);
     if (!msg) {
       throw new AppError(404, 'MESSAGE_NOT_FOUND', 'Pesan tidak ditemukan.');
@@ -2212,6 +2417,28 @@ export const repository = {
   async listCommunityGroups(): Promise<
     Array<CommunityGroupRecord & { creatorName: string; membersCount: number }>
   > {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const rows = await getPrismaClient().communityGroup.findMany({
+        include: { creator: { select: { displayName: true } } },
+        orderBy: { createdAt: 'desc' }
+      });
+      return rows.map((g) => ({
+        id: g.id,
+        name: g.name,
+        skillFocus: g.skillFocus,
+        categoryName: g.categoryName,
+        description: g.description,
+        meetingLink: g.meetingLink,
+        scheduleNote: g.scheduleNote,
+        creatorId: g.creatorId,
+        memberIds: g.memberIds,
+        createdAt: g.createdAt,
+        creatorName: g.creator.displayName,
+        membersCount: g.memberIds.length
+      }));
+    }
+
     const list = Array.from(memoryDb.groups.values()).sort(
       (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
     );
@@ -2238,6 +2465,41 @@ export const repository = {
     meetingLink?: string | null;
     scheduleNote: string;
   }): Promise<CommunityGroupRecord & { creatorName: string; membersCount: number }> {
+    const meetingLink =
+      input.meetingLink?.trim() ||
+      `https://meet.jit.si/SkillLoop-${input.name.trim().replace(/[^a-zA-Z0-9]/g, '')}`;
+
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const created = await getPrismaClient().communityGroup.create({
+        data: {
+          name: input.name.trim(),
+          skillFocus: input.skillFocus.trim(),
+          categoryName: input.categoryName.trim(),
+          description: input.description.trim(),
+          meetingLink,
+          scheduleNote: input.scheduleNote.trim(),
+          creatorId: input.creatorId,
+          memberIds: [input.creatorId]
+        },
+        include: { creator: { select: { displayName: true } } }
+      });
+      return {
+        id: created.id,
+        name: created.name,
+        skillFocus: created.skillFocus,
+        categoryName: created.categoryName,
+        description: created.description,
+        meetingLink: created.meetingLink,
+        scheduleNote: created.scheduleNote,
+        creatorId: created.creatorId,
+        memberIds: created.memberIds,
+        createdAt: created.createdAt,
+        creatorName: created.creator.displayName,
+        membersCount: created.memberIds.length
+      };
+    }
+
     const creator = await this.findUserById(input.creatorId);
     const rec: CommunityGroupRecord = {
       id: crypto.randomUUID(),
@@ -2245,9 +2507,7 @@ export const repository = {
       skillFocus: input.skillFocus.trim(),
       categoryName: input.categoryName.trim(),
       description: input.description.trim(),
-      meetingLink:
-        input.meetingLink?.trim() ||
-        `https://meet.jit.si/SkillLoop-${input.name.trim().replace(/[^a-zA-Z0-9]/g, '')}`,
+      meetingLink,
       scheduleNote: input.scheduleNote.trim(),
       creatorId: input.creatorId,
       memberIds: [input.creatorId],
@@ -2265,6 +2525,40 @@ export const repository = {
     groupId: string,
     userId: string
   ): Promise<CommunityGroupRecord & { creatorName: string; membersCount: number }> {
+    const mode = await resolveStorageMode();
+    if (mode === 'postgres') {
+      const prisma = getPrismaClient();
+      const existing = await prisma.communityGroup.findUnique({
+        where: { id: groupId }
+      });
+      if (!existing) {
+        throw new AppError(404, 'GROUP_NOT_FOUND', 'Kelompok belajar tidak ditemukan.');
+      }
+      const nextMembers = existing.memberIds.includes(userId)
+        ? existing.memberIds.filter((id) => id !== userId)
+        : [...existing.memberIds, userId];
+
+      const updated = await prisma.communityGroup.update({
+        where: { id: groupId },
+        data: { memberIds: nextMembers },
+        include: { creator: { select: { displayName: true } } }
+      });
+      return {
+        id: updated.id,
+        name: updated.name,
+        skillFocus: updated.skillFocus,
+        categoryName: updated.categoryName,
+        description: updated.description,
+        meetingLink: updated.meetingLink,
+        scheduleNote: updated.scheduleNote,
+        creatorId: updated.creatorId,
+        memberIds: updated.memberIds,
+        createdAt: updated.createdAt,
+        creatorName: updated.creator.displayName,
+        membersCount: updated.memberIds.length
+      };
+    }
+
     const group = memoryDb.groups.get(groupId);
     if (!group) {
       throw new AppError(404, 'GROUP_NOT_FOUND', 'Kelompok belajar tidak ditemukan.');
