@@ -295,12 +295,8 @@ export function DiscoverPage() {
                         <h2 className="text-lg sm:text-xl font-extrabold text-[#3D2317]">
                           {match.user.displayName}
                         </h2>
-                        {match.user.username && (
-                          <span className="text-xs font-bold text-[#8C7A70]">
-                            @{match.user.username}
-                          </span>
-                        )}
-                        <span className="rounded-full bg-[#FAF1E6] px-2.5 py-0.5 text-[10px] font-extrabold text-[#3D2317]">
+                        <span className="text-xs font-bold text-[#8C7A70]">
+                          {match.user.username ? `@${match.user.username} - ` : '- '}
                           Profil {match.user.profileCompleteness}%
                         </span>
                         {match.existingRequestStatus && (

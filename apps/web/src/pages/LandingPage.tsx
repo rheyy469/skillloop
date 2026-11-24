@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
+  ArrowUpRight,
   BookOpen,
   FileText,
-  Check
+  Check,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -45,6 +47,7 @@ const TOP_PODCASTERS_MENTORS = [
     id: 'raka',
     name: 'Mr. Raka Pratama',
     streams: '98% Match Fit . 12 Sesi',
+    tech: ['JavaScript', 'HTML/CSS', 'UI/UX'],
     teach: 'JavaScript & HTML/CSS',
     learn: 'UI/UX Design & Figma',
     timezone: 'WIB (UTC+7)',
@@ -59,6 +62,7 @@ const TOP_PODCASTERS_MENTORS = [
     id: 'naya',
     name: 'Nadia Lestary',
     streams: '98% Match Fit . 10 Sesi',
+    tech: ['UI/UX Design', 'Figma', 'React'],
     teach: 'UI/UX Design & Figma',
     learn: 'JavaScript & React',
     timezone: 'WIB (UTC+7)',
@@ -73,6 +77,7 @@ const TOP_PODCASTERS_MENTORS = [
     id: 'dimas',
     name: 'Evan Caster Lee',
     streams: '94% Match Fit . 8 Sesi',
+    tech: ['HTML/CSS', 'Pitching', 'Figma'],
     teach: 'HTML/CSS & Pitching',
     learn: 'Figma Prototyping',
     timezone: 'WITA (UTC+8)',
@@ -87,6 +92,7 @@ const TOP_PODCASTERS_MENTORS = [
     id: 'alya',
     name: 'Stefy Catlyna',
     streams: '96% Match Fit . 11 Sesi',
+    tech: ['Python', 'Data SQL', 'TypeScript'],
     teach: 'Python & Data SQL',
     learn: 'React & TypeScript',
     timezone: 'WIB (UTC+7)',
@@ -128,11 +134,24 @@ export function LandingPage() {
   const navigate = useNavigate();
 
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
-  const [selectedMentorIdx, setSelectedMentorIdx] = useState<number>(0);
+  const [selectedMentorIdx, setSelectedMentorIdx] = useState<number | null>(null);
   const [activeDiffId, setActiveDiffId] = useState<string>('diff-1');
   const [loggingInDemo, setLoggingInDemo] = useState(false);
 
   const activeSession = WEEKLY_SESSIONS.find((s) => s.id === activeSessionId);
+  const activeMentor =
+    selectedMentorIdx !== null ? TOP_PODCASTERS_MENTORS[selectedMentorIdx] : null;
+
+  useEffect(() => {
+    if (selectedMentorIdx === null) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedMentorIdx(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedMentorIdx]);
 
   const handleQuickDemo = async (email: string) => {
     setLoggingInDemo(true);
@@ -368,7 +387,7 @@ export function LandingPage() {
           )}
         </section>
 
-        {/* 3. TOP MENTORS OF THE WEEK (Foto 1 Fix: All 4 Cards Richly Filled & Balanced!) */}
+        {/* 3. TOP MENTORS OF THE WEEK (Clean Card: Name, Profile Tech, Portrait; Teach/Learn in Modal) */}
         <section>
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#3D2317] leading-tight">
@@ -382,74 +401,153 @@ export function LandingPage() {
             {TOP_PODCASTERS_MENTORS.map((mentor, idx) => {
               const isSelected = selectedMentorIdx === idx;
               return (
-                <div
+                <button
                   key={mentor.id}
+                  type="button"
                   onClick={() => setSelectedMentorIdx(idx)}
-                  className={`cursor-pointer relative overflow-hidden rounded-[28px] ${mentor.bg} ${mentor.textColor} p-5 transition-all duration-300 shadow-md flex flex-col justify-between min-h-[370px] ${
-                    isSelected ? 'ring-4 ring-[#3D2317]/20 -translate-y-1' : 'hover:-translate-y-0.5'
+                  className={`group text-center cursor-pointer relative overflow-hidden rounded-[28px] ${mentor.bg} ${mentor.textColor} p-5 pt-6 transition-all duration-300 shadow-md flex flex-col items-center justify-between min-h-[350px] ${
+                    isSelected
+                      ? 'ring-4 ring-[#3D2317]/25 -translate-y-1'
+                      : 'hover:-translate-y-1 hover:shadow-lg'
                   }`}
                 >
-                  {/* Top & Middle Rich Details on ALL 4 Cards */}
-                  <div className="relative z-10 space-y-2.5">
-                    <div className="flex items-center justify-between gap-1.5">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold shadow-sm ${mentor.badgeBg}`}
-                      >
-                        <BookOpen className="h-3 w-3" />
-                        <span>{mentor.streams}</span>
-                      </span>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${mentor.chipBg}`}>
-                        {mentor.timezone}
-                      </span>
+                  <span
+                    className={`absolute right-3.5 top-3.5 flex h-6 w-6 items-center justify-center rounded-full ${mentor.chipBg} opacity-75 group-hover:opacity-100 group-hover:scale-105 transition`}
+                  >
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+
+                  {/* Card Header: Centered Name + Divider + Profile Tech Tags */}
+                  <div className="relative z-10 w-full space-y-3 pt-1">
+                    <div className="space-y-2">
+                      <h3 className="px-4 text-[22px] sm:text-2xl font-extrabold tracking-tight leading-tight">
+                        {mentor.name}
+                      </h3>
+                      <div
+                        aria-hidden="true"
+                        className="mx-auto h-[3px] w-10 rounded-full bg-current opacity-35"
+                      />
                     </div>
 
-                    <h3 className="text-lg font-extrabold leading-tight">
-                      {mentor.name}
-                    </h3>
-
-                    <div className="space-y-1.5 pt-0.5 text-[11px]">
-                      <div className={`rounded-xl px-2.5 py-1.5 ${mentor.chipBg}`}>
-                        <span className="block text-[9px] font-extrabold uppercase opacity-80">
-                          Teach:
+                    <div className="flex flex-wrap justify-center gap-1.5">
+                      {mentor.tech.map((skill) => (
+                        <span
+                          key={skill}
+                          className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${mentor.chipBg}`}
+                        >
+                          {skill}
                         </span>
-                        <span className="font-extrabold">{mentor.teach}</span>
-                      </div>
-                      <div className={`rounded-xl px-2.5 py-1.5 ${mentor.chipBg}`}>
-                        <span className="block text-[9px] font-extrabold uppercase opacity-80">
-                          Learn:
-                        </span>
-                        <span className="font-extrabold">{mentor.learn}</span>
-                      </div>
-                    </div>
-
-                    <div className="pt-1">
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleQuickDemo(mentor.email);
-                        }}
-                        className={`w-full inline-flex items-center justify-between rounded-full pl-3.5 pr-1.5 py-1.5 text-[11px] font-extrabold shadow-sm transition hover:scale-[1.02] ${mentor.badgeBg}`}
-                      >
-                        <span>{tx('Masuk sbg Akun Ini', 'Login as Persona')}</span>
-                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F6C945] text-[#3D2317]">
-                          <BookOpen className="h-3 w-3" />
-                        </span>
-                      </button>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Full-Bleed Character Portrait with Open Book at Bottom */}
-                  <div className="relative z-10 mt-2 -mx-3 -mb-5 flex justify-center">
-                    <div className="h-44 w-full max-w-[210px]">
+                  {/* Full-Bleed Character Portrait at Bottom */}
+                  <div className="relative z-10 mt-4 -mx-3 -mb-5 flex w-[calc(100%+1.5rem)] justify-center">
+                    <div className="h-48 w-full max-w-[220px] transition-transform duration-300 group-hover:scale-[1.03]">
                       <CharacterPortrait variant={mentor.portraitVariant} />
                     </div>
                   </div>
-                </div>
+                </button>
               );
             })}
           </div>
         </section>
+
+        {/* MENTOR DETAIL MODAL (Teach & Learn + Quick Action on Card Click) */}
+        {activeMentor && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="mentor-modal-title"
+            onClick={() => setSelectedMentorIdx(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md overflow-hidden rounded-[32px] bg-white shadow-2xl border border-[#3D2317]/10"
+            >
+              <div className={`${activeMentor.bg} ${activeMentor.textColor} p-6 pb-5 relative`}>
+                <button
+                  type="button"
+                  aria-label="Tutup detail mentor"
+                  onClick={() => setSelectedMentorIdx(null)}
+                  className={`absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full ${activeMentor.chipBg} hover:opacity-80 transition`}
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <div className="flex items-center gap-4 pr-8">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-white/20 pt-1 flex items-end justify-center">
+                    <CharacterPortrait variant={activeMentor.portraitVariant} className="h-20 w-20" />
+                  </div>
+                  <div className="min-w-0 space-y-1.5">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${activeMentor.badgeBg}`}
+                      >
+                        <BookOpen className="h-3 w-3" />
+                        <span>{activeMentor.streams}</span>
+                      </span>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${activeMentor.chipBg}`}>
+                        {activeMentor.timezone}
+                      </span>
+                    </div>
+                    <h3 id="mentor-modal-title" className="text-xl font-extrabold leading-tight">
+                      {activeMentor.name}
+                    </h3>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-4 text-[#3D2317]">
+                <div className="space-y-2.5 text-xs">
+                  <div className="rounded-2xl bg-[#FAF1E6] p-3.5 border border-[#3D2317]/10">
+                    <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#EE7838]">
+                      Teach
+                    </span>
+                    <p className="mt-0.5 text-sm font-extrabold text-[#3D2317]">
+                      {activeMentor.teach}
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-[#FAF1E6] p-3.5 border border-[#3D2317]/10">
+                    <span className="block text-[10px] font-extrabold uppercase tracking-wider text-[#4EA674]">
+                      Learn
+                    </span>
+                    <p className="mt-0.5 text-sm font-extrabold text-[#3D2317]">
+                      {activeMentor.learn}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+                  <Link
+                    to="/discover"
+                    onClick={() => setSelectedMentorIdx(null)}
+                    className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-[#F6C945] px-4 py-2.5 text-xs font-extrabold text-[#3D2317] hover:bg-[#EE7838] hover:text-white transition"
+                  >
+                    <span>{tx('Eksplorasi Partner', 'Discover Partners')}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </Link>
+
+                  <button
+                    type="button"
+                    disabled={loggingInDemo}
+                    onClick={() => handleQuickDemo(activeMentor.email)}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#3D2317]/20 bg-white px-4 py-2.5 text-xs font-bold text-[#3D2317] hover:bg-[#3D2317] hover:text-white transition"
+                  >
+                    <BookOpen className="h-3.5 w-3.5 text-[#EE7838]" />
+                    <span>
+                      {loggingInDemo
+                        ? 'Memuat...'
+                        : tx('Demo sbg Persona', 'Demo as Persona')}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* 4. TWO-TONE STATEMENT + STATS (5+, 12+, 236) + GEOMETRIC COLLAGE */}
         <section>

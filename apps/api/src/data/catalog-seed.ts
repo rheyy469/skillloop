@@ -21,7 +21,7 @@ export interface SeedDemoUser {
   passwordPlain: string;
   displayName: string;
   username: string;
-  bio: string;
+  bio: string | null;
   timezone: string;
   languages: { code: string; proficiency: string }[];
   skills: {
@@ -29,7 +29,7 @@ export interface SeedDemoUser {
     role: SkillRole;
     proficiencyLevel?: SkillLevel;
     targetLevel?: SkillLevel;
-    description: string;
+    description: string | null;
   }[];
 }
 
@@ -261,25 +261,25 @@ export const DEMO_USERS: SeedDemoUser[] = [
         skillSlug: 'html-css',
         role: 'TEACH',
         proficiencyLevel: 'INTERMEDIATE',
-        description: 'Suka membantu pemula memahami konsep box model, positioning, dan responsive design.'
+        description: null
       },
       {
         skillSlug: 'public-speaking-pitching',
         role: 'TEACH',
         proficiencyLevel: 'INTERMEDIATE',
-        description: 'Berpengalaman menyusun pitch deck kompetisi mahasiswa dan latihan presentasi.'
+        description: null
       },
       {
         skillSlug: 'figma',
         role: 'LEARN',
         targetLevel: 'BEGINNER',
-        description: 'Ingin belajar dasar pembuatan mockup aplikasi sebelum mulai coding.'
+        description: null
       },
       {
         skillSlug: 'english-conversation',
         role: 'LEARN',
         targetLevel: 'INTERMEDIATE',
-        description: 'Ingin melatih kelancaran berbicara bahasa Inggris untuk diskusi teknis.'
+        description: null
       }
     ]
   },
@@ -318,13 +318,13 @@ export const DEMO_USERS: SeedDemoUser[] = [
         skillSlug: 'javascript',
         role: 'LEARN',
         targetLevel: 'BEGINNER',
-        description: 'Ingin belajar dasar JavaScript untuk beralih ke pengembangan web interaktif.'
+        description: null
       },
       {
         skillSlug: 'react',
         role: 'LEARN',
         targetLevel: 'BEGINNER',
-        description: 'Ingin memahami pembuatan komponen dan state management dasar di React.'
+        description: null
       }
     ]
   },
@@ -334,42 +334,39 @@ export const DEMO_USERS: SeedDemoUser[] = [
     passwordPlain: 'DemoSkillLoop123!',
     displayName: 'Farhan Akbar',
     username: 'farhanakbar',
-    bio: 'Full-stack builder yang terbiasa dengan React, TypeScript, dan Node.js. Sedang mencari partner untuk belajar Python atau SQL & PostgreSQL tingkat lanjut.',
+    bio: null,
     timezone: 'Asia/Jakarta',
-    languages: [
-      { code: 'id', proficiency: 'Native' },
-      { code: 'en', proficiency: 'Conversational' }
-    ],
+    languages: [{ code: 'id', proficiency: 'Native' }],
     skills: [
       {
         skillSlug: 'react',
         role: 'TEACH',
         proficiencyLevel: 'ADVANCED',
-        description: 'Menguasai arsitektur komponen React, custom hooks, dan optimasi performa.'
+        description: null
       },
       {
         skillSlug: 'typescript',
         role: 'TEACH',
         proficiencyLevel: 'ADVANCED',
-        description: 'Bisa mengajarkan type safety, generics, dan integrasi TypeScript di frontend/backend.'
+        description: null
       },
       {
         skillSlug: 'nodejs-express',
         role: 'TEACH',
         proficiencyLevel: 'INTERMEDIATE',
-        description: 'Berbagi praktik terbaik membangun REST API yang aman dengan Express dan TypeScript.'
+        description: null
       },
       {
         skillSlug: 'python',
         role: 'LEARN',
         targetLevel: 'INTERMEDIATE',
-        description: 'Ingin mempelajari ekosistem Python untuk pengolahan data.'
+        description: null
       },
       {
         skillSlug: 'sql-postgresql',
         role: 'LEARN',
         targetLevel: 'ADVANCED',
-        description: 'Ingin mendalami query tuning dan rancangan skema database produksi.'
+        description: null
       }
     ]
   }

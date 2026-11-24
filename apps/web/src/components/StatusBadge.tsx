@@ -12,30 +12,26 @@ export function RequestStatusBadge({ status }: { status: RequestStatus }) {
   switch (status) {
     case 'PENDING':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#3D2317]/15 bg-[#FFF8E1] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#EE7838]" />
+        <span className="inline-flex items-center rounded-full border border-[#3D2317]/15 bg-[#FFF8E1] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
           <span>{tx('Menunggu', 'Pending')}</span>
         </span>
       );
     case 'ACCEPTED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#2B6E48]/30 bg-[#E8F7EE] px-3 py-0.5 text-xs font-extrabold text-[#14532D] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#16A34A]" />
+        <span className="inline-flex items-center rounded-full border border-[#2B6E48]/30 bg-[#E8F7EE] px-3 py-0.5 text-xs font-extrabold text-[#14532D] shadow-sm">
           <span>{tx('Disepakati', 'Accepted')}</span>
         </span>
       );
     case 'REJECTED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#9E2A32]/25 bg-[#FFEBEF] px-3 py-0.5 text-xs font-extrabold text-[#881337] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#E11D48]" />
+        <span className="inline-flex items-center rounded-full border border-[#9E2A32]/25 bg-[#FFEBEF] px-3 py-0.5 text-xs font-extrabold text-[#881337] shadow-sm">
           <span>{tx('Ditolak', 'Rejected')}</span>
         </span>
       );
     case 'CANCELLED':
     case 'EXPIRED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#3D2317]/15 bg-[#F5EFE6] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#8C7A70]" />
+        <span className="inline-flex items-center rounded-full border border-[#3D2317]/15 bg-[#F5EFE6] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
           <span>
             {status === 'CANCELLED'
               ? tx('Dibatalkan', 'Cancelled')
@@ -51,29 +47,25 @@ export function SessionStatusBadge({ status }: { status: SessionStatus }) {
   switch (status) {
     case 'PROPOSED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#3D2317]/15 bg-[#FFF8E1] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#EE7838]" />
+        <span className="inline-flex items-center rounded-full border border-[#3D2317]/15 bg-[#FFF8E1] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
           <span>{tx('Menunggu Konfirmasi', 'Awaiting Confirmation')}</span>
         </span>
       );
     case 'SCHEDULED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#255799]/25 bg-[#EAF3FF] px-3 py-0.5 text-xs font-extrabold text-[#1E3A8A] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#2563EB]" />
+        <span className="inline-flex items-center rounded-full border border-[#255799]/25 bg-[#EAF3FF] px-3 py-0.5 text-xs font-extrabold text-[#1E3A8A] shadow-sm">
           <span>{tx('Terjadwal', 'Scheduled')}</span>
         </span>
       );
     case 'COMPLETED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#2B6E48]/30 bg-[#E8F7EE] px-3 py-0.5 text-xs font-extrabold text-[#14532D] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#16A34A]" />
+        <span className="inline-flex items-center rounded-full border border-[#2B6E48]/30 bg-[#E8F7EE] px-3 py-0.5 text-xs font-extrabold text-[#14532D] shadow-sm">
           <span>{tx('Selesai', 'Completed')}</span>
         </span>
       );
     case 'CANCELLED':
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#3D2317]/15 bg-[#F5EFE6] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
-          <span className="h-2 w-2 rounded-full bg-[#8C7A70]" />
+        <span className="inline-flex items-center rounded-full border border-[#3D2317]/15 bg-[#F5EFE6] px-3 py-0.5 text-xs font-extrabold text-[#3D2317] shadow-sm">
           <span>{tx('Dibatalkan', 'Cancelled')}</span>
         </span>
       );

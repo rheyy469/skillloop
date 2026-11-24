@@ -112,7 +112,7 @@ export function calculateProfileCompleteness(user: {
   bio: string | null;
   timezone: string;
   languages: string[];
-  skills: { role: SkillRole }[];
+  skills: { role: SkillRole; description?: string | null }[];
 }): { score: number; missingSteps: string[]; isComplete: boolean } {
   const missingSteps: string[] = [];
   let score = 0;
@@ -123,8 +123,11 @@ export function calculateProfileCompleteness(user: {
     missingSteps.push('Lengkapi nama tampilan (minimal 2 karakter)');
   }
 
-  if (user.bio && user.bio.trim().length >= 10) {
+  const trimmedBio = user.bio?.trim() || '';
+  if (trimmedBio.length >= 80) {
     score += 15;
+  } else if (trimmedBio.length >= 10) {
+    score += 8;
   } else {
     missingSteps.push('Tambahkan bio singkat tentang latar belakang dan minat belajarmu');
   }
@@ -141,17 +144,25 @@ export function calculateProfileCompleteness(user: {
     missingSteps.push('Pilih minimal 1 bahasa komunikasi');
   }
 
-  const hasTeach = user.skills.some((s) => s.role === 'TEACH');
-  const hasLearn = user.skills.some((s) => s.role === 'LEARN');
+  const teachSkills = user.skills.filter((s) => s.role === 'TEACH');
+  const learnSkills = user.skills.filter((s) => s.role === 'LEARN');
+  const hasTeach = teachSkills.length > 0;
+  const hasLearn = learnSkills.length > 0;
 
   if (hasTeach) {
-    score += 20;
+    const hasTeachDetail = teachSkills.some(
+      (s) => s.description === undefined || Boolean(s.description?.trim())
+    );
+    score += hasTeachDetail ? 20 : 7;
   } else {
     missingSteps.push('Tambahkan minimal 1 skill yang bisa kamu ajarkan (Can Teach)');
   }
 
   if (hasLearn) {
-    score += 20;
+    const hasLearnDetail = learnSkills.some(
+      (s) => s.description === undefined || Boolean(s.description?.trim())
+    );
+    score += hasLearnDetail ? 20 : 6;
   } else {
     missingSteps.push('Tambahkan minimal 1 skill yang ingin kamu pelajari (Want to Learn)');
   }

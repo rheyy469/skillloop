@@ -20,7 +20,7 @@ import {
 } from './api';
 import { RequestStatus, SessionStatus, SkillLevel, SkillRole } from '@skillloop/shared';
 
-const STORAGE_KEY = 'skillloop_interactive_state_v2';
+const STORAGE_KEY = 'skillloop_interactive_state_v3';
 const ACTIVE_USER_KEY = 'skillloop_active_user_email_v2';
 const LOGGED_OUT_KEY = 'skillloop_logged_out_v2';
 
@@ -137,7 +137,7 @@ interface DemoUserRecord {
   password?: string;
   displayName: string;
   username: string;
-  bio: string;
+  bio: string | null;
   avatarUrl?: string | null;
   timezone: string;
   languages: string[];
@@ -150,7 +150,7 @@ function makeSkillDecl(
   skillId: string,
   role: SkillRole,
   level: SkillLevel,
-  description: string
+  description: string | null
 ): SkillDeclarationDto {
   const found = INITIAL_CATALOG.find((s) => s.id === skillId) || INITIAL_CATALOG[0];
   return {
@@ -208,13 +208,13 @@ const INITIAL_USERS: DemoUserRecord[] = [
     username: 'dimasaditya',
     bio: 'Web Developer & Tech Speaker. Suka mengajar HTML/CSS dan teknik Public Speaking / Product Pitching. Sedang mempelajari Figma & Product Management.',
     timezone: 'Asia/Makassar',
-    languages: ['id', 'en'],
+    languages: ['id'],
     isActive: true,
     skills: [
-      makeSkillDecl('sd-9', 'sk-speaking', 'TEACH', 'ADVANCED', 'Melatih struktur presentasi produk, storytelling teknis, dan latihan pitching.'),
-      makeSkillDecl('sd-10', 'sk-html', 'TEACH', 'INTERMEDIATE', 'Fondasi layout web responsif dan aksesibilitas.'),
-      makeSkillDecl('sd-11', 'sk-figma', 'LEARN', 'BEGINNER', 'Ingin bisa membuat mockup cepat untuk deck presentasi produk.'),
-      makeSkillDecl('sd-12', 'sk-js', 'LEARN', 'INTERMEDIATE', 'Memperdalam ES6 dan integrasi REST API.')
+      makeSkillDecl('sd-9', 'sk-speaking', 'TEACH', 'ADVANCED', null),
+      makeSkillDecl('sd-10', 'sk-html', 'TEACH', 'INTERMEDIATE', null),
+      makeSkillDecl('sd-11', 'sk-figma', 'LEARN', 'BEGINNER', null),
+      makeSkillDecl('sd-12', 'sk-js', 'LEARN', 'INTERMEDIATE', null)
     ]
   },
   {
@@ -229,8 +229,8 @@ const INITIAL_USERS: DemoUserRecord[] = [
     skills: [
       makeSkillDecl('sd-13', 'sk-python', 'TEACH', 'ADVANCED', 'Automasi pengolahan data, Pandas, dan pembuatan API analitik.'),
       makeSkillDecl('sd-14', 'sk-sql', 'TEACH', 'ADVANCED', 'Optimasi query PostgreSQL, indexing, dan desain skema analitik.'),
-      makeSkillDecl('sd-15', 'sk-react', 'LEARN', 'INTERMEDIATE', 'Ingin membangun dashboard visualisasi data interaktif dengan React.'),
-      makeSkillDecl('sd-16', 'sk-js', 'LEARN', 'INTERMEDIATE', 'Memahami ekosistem frontend modern.')
+      makeSkillDecl('sd-15', 'sk-react', 'LEARN', 'INTERMEDIATE', null),
+      makeSkillDecl('sd-16', 'sk-js', 'LEARN', 'INTERMEDIATE', null)
     ]
   },
   {
@@ -238,15 +238,15 @@ const INITIAL_USERS: DemoUserRecord[] = [
     email: 'farhan@demo.skillloop.id',
     displayName: 'Farhan Akbar',
     username: 'farhanakbar',
-    bio: 'Full-Stack TypeScript & React Developer. Siap membimbing React, TypeScript, dan Node.js, serta ingin mempelajari Python & SQL untuk fitur AI/Data.',
+    bio: null,
     timezone: 'Asia/Jakarta',
-    languages: ['id', 'en'],
+    languages: ['id'],
     isActive: true,
     skills: [
-      makeSkillDecl('sd-17', 'sk-react', 'TEACH', 'ADVANCED', 'Arsitektur React modern, custom hooks, dan state management.'),
-      makeSkillDecl('sd-18', 'sk-ts', 'TEACH', 'ADVANCED', 'Type-safe frontend & backend development dengan TypeScript.'),
-      makeSkillDecl('sd-19', 'sk-python', 'LEARN', 'BEGINNER', 'Ingin menguasai Python untuk integrasi pipeline data dan AI.'),
-      makeSkillDecl('sd-20', 'sk-sql', 'LEARN', 'INTERMEDIATE', 'Memperdalam query kompleks dan tuning performa PostgreSQL.')
+      makeSkillDecl('sd-17', 'sk-react', 'TEACH', 'ADVANCED', null),
+      makeSkillDecl('sd-18', 'sk-ts', 'TEACH', 'ADVANCED', null),
+      makeSkillDecl('sd-19', 'sk-python', 'LEARN', 'BEGINNER', null),
+      makeSkillDecl('sd-20', 'sk-sql', 'LEARN', 'INTERMEDIATE', null)
     ]
   }
 ];
@@ -705,16 +705,46 @@ function toOwnProfile(u: DemoUserRecord): OwnProfileDto {
   const teachSkills = u.skills.filter((s) => s.role === 'TEACH');
   const learnSkills = u.skills.filter((s) => s.role === 'LEARN');
   const missingSteps: string[] = [];
-  if (!u.bio) missingSteps.push('Tambahkan bio singkat & fokus belajar');
-  if (teachSkills.length === 0) missingSteps.push('Tambahkan minimal 1 skill Can Teach');
-  if (learnSkills.length === 0) missingSteps.push('Tambahkan minimal 1 skill Want to Learn');
-  const score = Math.min(
-    100,
-    25 +
-      (u.bio ? 25 : 0) +
-      (teachSkills.length > 0 ? 25 : 0) +
-      (learnSkills.length > 0 ? 25 : 0)
-  );
+  let score = 0;
+
+  if (u.displayName && u.displayName.trim().length >= 2) {
+    score += 20;
+  } else {
+    missingSteps.push('Lengkapi nama tampilan (minimal 2 karakter)');
+  }
+
+  const trimmedBio = u.bio?.trim() || '';
+  if (trimmedBio.length >= 80) {
+    score += 15;
+  } else if (trimmedBio.length >= 10) {
+    score += 8;
+  } else {
+    missingSteps.push('Tambahkan bio singkat & fokus belajar');
+  }
+
+  if (u.timezone && u.timezone.trim().length > 0) {
+    score += 10;
+  }
+
+  if (u.languages.length > 0) {
+    score += 15;
+  } else {
+    missingSteps.push('Pilih minimal 1 bahasa komunikasi');
+  }
+
+  if (teachSkills.length > 0) {
+    const hasTeachDetail = teachSkills.some((s) => Boolean(s.description?.trim()));
+    score += hasTeachDetail ? 20 : 7;
+  } else {
+    missingSteps.push('Tambahkan minimal 1 skill Can Teach');
+  }
+
+  if (learnSkills.length > 0) {
+    const hasLearnDetail = learnSkills.some((s) => Boolean(s.description?.trim()));
+    score += hasLearnDetail ? 20 : 6;
+  } else {
+    missingSteps.push('Tambahkan minimal 1 skill Want to Learn');
+  }
   const emailLower = u.email.toLowerCase();
   const isAdmin =
     emailLower === 'raka@demo.skillloop.id' || emailLower.startsWith('admin@');
@@ -811,7 +841,7 @@ function computeMatchesForUser(
         };
       });
 
-    // Ensure rich demo reciprocal visibility across all demo personas
+    // Ensure rich demo reciprocal visibility across all demo personas with realistic varied fit scores
     if (aCanTeachB.length === 0 && myTeach.length > 0) {
       const mt = myTeach[0];
       aCanTeachB = [
@@ -826,8 +856,8 @@ function computeMatchesForUser(
           learnerTargetLevel: 'INTERMEDIATE',
           teacherDescription: mt.description,
           learnerDescription: 'Tertarik memperdalam topik ini untuk kolaborasi lintas disiplin.',
-          skillFit: 88,
-          levelFit: 86
+          skillFit: 72,
+          levelFit: 78
         }
       ];
     }
@@ -846,16 +876,22 @@ function computeMatchesForUser(
           learnerTargetLevel: 'INTERMEDIATE',
           teacherDescription: ct.description,
           learnerDescription: 'Relevan untuk memperluas wawasan teknis & produk.',
-          skillFit: 88,
-          levelFit: 86
+          skillFit: 70,
+          levelFit: 76
         }
       ];
     }
 
     if (aCanTeachB.length === 0 || bCanTeachA.length === 0) continue;
 
+    const availabilityById: Record<string, number> = {
+      'u-naya': 98,
+      'u-dimas': 82,
+      'u-alya': 74,
+      'u-farhan': 61
+    };
     const sameTz = candidate.timezone === currentUser.timezone;
-    const availabilityFit = sameTz ? 98 : 88;
+    const availabilityFit = availabilityById[candidate.id] ?? (sameTz ? 88 : 72);
     const aToBScore = Math.round(
       0.7 * aCanTeachB[0].skillFit + 0.2 * aCanTeachB[0].levelFit + 0.1 * availabilityFit
     );

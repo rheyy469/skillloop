@@ -423,14 +423,26 @@ class MemoryDatabase {
         this.userSkills.set(usRec.id, usRec);
       }
 
-      // Seed default evening availability slots (Tue, Thu, Sat 19:00-21:00) for Availability Fit & Filtering
-      for (const dayOfWeek of [2, 4, 6]) {
+      // Seed varied availability slots per demo user for realistic Availability Fit
+      const slotScheduleByEmail: Record<string, { days: number[]; start: number; end: number }> = {
+        'raka@demo.skillloop.id': { days: [2, 4, 6], start: 19 * 60, end: 21 * 60 },
+        'naya@demo.skillloop.id': { days: [2, 4, 6], start: 19 * 60, end: 21 * 60 },
+        'dimas@demo.skillloop.id': { days: [6], start: 20 * 60, end: 21 * 60 + 15 },
+        'alya@demo.skillloop.id': { days: [6], start: 20 * 60 + 20, end: 21 * 60 + 30 },
+        'farhan@demo.skillloop.id': { days: [1, 3, 5], start: 18 * 60, end: 20 * 60 }
+      };
+      const slotConfig = slotScheduleByEmail[userRec.email] || {
+        days: [2, 4, 6],
+        start: 19 * 60,
+        end: 21 * 60
+      };
+      for (const dayOfWeek of slotConfig.days) {
         const slotRec: AvailabilitySlotRecord = {
           id: crypto.randomUUID(),
           userId: userRec.id,
           dayOfWeek,
-          startMinute: 19 * 60,
-          endMinute: 21 * 60,
+          startMinute: slotConfig.start,
+          endMinute: slotConfig.end,
           timezone: userRec.timezone
         };
         this.availabilitySlots.set(slotRec.id, slotRec);
