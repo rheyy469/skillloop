@@ -382,15 +382,42 @@ const API_BASE = resolveApiBase();
 const ALLOW_OFFLINE_FALLBACK =
   Boolean(viteEnv.DEV) || viteEnv.VITE_ENABLE_OFFLINE_FALLBACK === 'true';
 
+const SESSION_TOKEN_STORAGE_KEY = 'skillloop_session_token_v1';
+
+function getStoredSessionToken(): string | null {
+  try {
+    return typeof window !== 'undefined'
+      ? window.localStorage.getItem(SESSION_TOKEN_STORAGE_KEY)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+function setStoredSessionToken(token: string | null): void {
+  try {
+    if (typeof window === 'undefined') return;
+    if (token) {
+      window.localStorage.setItem(SESSION_TOKEN_STORAGE_KEY, token);
+    } else {
+      window.localStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+    }
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 async function requestJson<T, M = Record<string, unknown>>(
   path: string,
   options: RequestInit = {}
 ): Promise<{ data: T; meta: M }> {
+  const token = getStoredSessionToken();
   const res = await fetch(`${API_BASE}${path}`, {
     ...options,
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {})
     }
   });
@@ -398,6 +425,9 @@ async function requestJson<T, M = Record<string, unknown>>(
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
+    if (res.status === 401) {
+      setStoredSessionToken(null);
+    }
     const errObj = body?.error;
     throw new ApiClientError(
       res.status,
@@ -449,10 +479,16 @@ export const api = {
     login: (payload: { email: string; password: string }) =>
       withFallback(
         async () => {
-          const res = await requestJson<OwnProfileDto>('/auth/login', {
-            method: 'POST',
-            body: JSON.stringify(payload)
-          });
+          const res = await requestJson<OwnProfileDto, { sessionToken?: string }>(
+            '/auth/login',
+            {
+              method: 'POST',
+              body: JSON.stringify(payload)
+            }
+          );
+          if (res.meta?.sessionToken) {
+            setStoredSessionToken(res.meta.sessionToken);
+          }
           setActiveUserEmail(res.data.email);
           localFallbackApi.clearLoggedOut();
           return res;
@@ -468,10 +504,16 @@ export const api = {
     }) =>
       withFallback(
         async () => {
-          const res = await requestJson<OwnProfileDto>('/auth/register', {
-            method: 'POST',
-            body: JSON.stringify(payload)
-          });
+          const res = await requestJson<OwnProfileDto, { sessionToken?: string }>(
+            '/auth/register',
+            {
+              method: 'POST',
+              body: JSON.stringify(payload)
+            }
+          );
+          if (res.meta?.sessionToken) {
+            setStoredSessionToken(res.meta.sessionToken);
+          }
           setActiveUserEmail(res.data.email);
           localFallbackApi.clearLoggedOut();
           return res;
@@ -484,10 +526,12 @@ export const api = {
           const res = await requestJson<{ loggedOut: boolean }>('/auth/logout', {
             method: 'POST'
           });
+          setStoredSessionToken(null);
           localFallbackApi.logout();
           return res;
         },
         () => {
+          setStoredSessionToken(null);
           localFallbackApi.logout();
           return { data: { loggedOut: true }, meta: {} };
         }

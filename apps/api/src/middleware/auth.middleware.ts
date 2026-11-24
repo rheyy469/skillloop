@@ -90,14 +90,27 @@ export function clearSessionCookie(res: Response, req?: Request): void {
   });
 }
 
+function extractSessionToken(req: Request): string | null {
+  const cookieToken = req.cookies?.[SESSION_COOKIE_NAME];
+  if (cookieToken && typeof cookieToken === 'string') {
+    return cookieToken;
+  }
+  const authHeader = req.headers.authorization;
+  if (authHeader && typeof authHeader === 'string' && /^Bearer\s+/i.test(authHeader)) {
+    const bearerToken = authHeader.replace(/^Bearer\s+/i, '').trim();
+    if (bearerToken) return bearerToken;
+  }
+  return null;
+}
+
 export async function requireAuth(
   req: Request,
   _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const rawToken = req.cookies?.[SESSION_COOKIE_NAME];
-    if (!rawToken || typeof rawToken !== 'string') {
+    const rawToken = extractSessionToken(req);
+    if (!rawToken) {
       throw new AppError(
         401,
         'UNAUTHORIZED',

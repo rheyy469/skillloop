@@ -113,9 +113,9 @@ apiRouter.post(
       languages: parsed.languages
     });
 
-    await issueSessionCookie(res, user.id, req);
+    const sessionToken = await issueSessionCookie(res, user.id, req);
     const fullProfile = await repository.getFullUserProfile(user.id);
-    sendSuccess(res, toOwnProfileDto(fullProfile!), 201);
+    sendSuccess(res, toOwnProfileDto(fullProfile!), 201, { sessionToken });
   })
 );
 
@@ -142,9 +142,9 @@ apiRouter.post(
       );
     }
 
-    await issueSessionCookie(res, user.id, req);
+    const sessionToken = await issueSessionCookie(res, user.id, req);
     const fullProfile = await repository.getFullUserProfile(user.id);
-    sendSuccess(res, toOwnProfileDto(fullProfile!));
+    sendSuccess(res, toOwnProfileDto(fullProfile!), 200, { sessionToken });
   })
 );
 
