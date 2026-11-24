@@ -717,35 +717,44 @@ export function DashboardPage() {
             </div>
 
             {/* 3 Period Summary Pills */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-2xl bg-white p-3.5 shadow-sm">
-                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#EE7838]">
-                  <Clock className="h-3 w-3" />
-                  <span>{tx('Durasi Aktivitas', 'Activity Time')}</span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-2.5 sm:p-3.5 shadow-sm flex flex-col justify-between">
+                <div
+                  title={tx('Durasi Aktivitas', 'Activity Time')}
+                  className="flex items-center gap-1 sm:gap-1.5 min-w-0 text-[10px] font-extrabold uppercase tracking-wider text-[#EE7838]"
+                >
+                  <Clock className="h-3 w-3 shrink-0" />
+                  <span className="truncate">{tx('Durasi Aktivitas', 'Activity Time')}</span>
                 </div>
-                <p className="mt-1 text-xl sm:text-2xl font-extrabold text-[#3D2317]">
+                <p className="mt-1.5 truncate text-lg sm:text-2xl font-extrabold text-[#3D2317]">
                   {periodTotalMinutes >= 60
                     ? `${(periodTotalMinutes / 60).toFixed(1)} jam`
                     : `${periodTotalMinutes} mnt`}
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white p-3.5 shadow-sm">
-                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#4EA674]">
-                  <Calendar className="h-3 w-3" />
-                  <span>{tx('Sesi & Request', 'Sessions & Requests')}</span>
+              <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-2.5 sm:p-3.5 shadow-sm flex flex-col justify-between">
+                <div
+                  title={tx('Sesi & Request', 'Sessions & Requests')}
+                  className="flex items-center gap-1 sm:gap-1.5 min-w-0 text-[10px] font-extrabold uppercase tracking-wider text-[#4EA674]"
+                >
+                  <Calendar className="h-3 w-3 shrink-0" />
+                  <span className="truncate">{tx('Sesi & Request', 'Sessions & Requests')}</span>
                 </div>
-                <p className="mt-1 text-xl sm:text-2xl font-extrabold text-[#3D2317]">
+                <p className="mt-1.5 truncate text-lg sm:text-2xl font-extrabold text-[#3D2317]">
                   {periodTotalSessions + periodTotalRequests}
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white p-3.5 shadow-sm">
-                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#3D2317]">
-                  <Award className="h-3 w-3 text-[#F6C945]" />
-                  <span>{tx('Milestone', 'Milestones')}</span>
+              <div className="min-w-0 overflow-hidden rounded-2xl bg-white p-2.5 sm:p-3.5 shadow-sm flex flex-col justify-between">
+                <div
+                  title={tx('Milestone', 'Milestones')}
+                  className="flex items-center gap-1 sm:gap-1.5 min-w-0 text-[10px] font-extrabold uppercase tracking-wider text-[#3D2317]"
+                >
+                  <Award className="h-3 w-3 shrink-0 text-[#F6C945]" />
+                  <span className="truncate">{tx('Milestone', 'Milestones')}</span>
                 </div>
-                <p className="mt-1 text-xl sm:text-2xl font-extrabold text-[#3D2317]">
+                <p className="mt-1.5 truncate text-lg sm:text-2xl font-extrabold text-[#3D2317]">
                   {periodTotalMilestones}
                 </p>
               </div>

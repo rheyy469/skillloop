@@ -563,31 +563,36 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
             {/* Mobile Sidebar Drawer (When hamburger clicked on phone) */}
             {mobileOpen && (
-              <div className="mt-4 border-t border-[#3D2317]/10 pt-4 md:hidden space-y-3 max-h-[78vh] overflow-y-auto">
-                {/* Mobile Search */}
-                <form onSubmit={handleQuickSearch} className="relative">
-                  <Search className="pointer-events-none absolute left-3.5 top-2.5 h-3.5 w-3.5 text-[#8C7A70]" />
-                  <input
-                    type="search"
-                    value={quickSearch}
-                    onChange={(e) => setQuickSearch(e.target.value)}
-                    placeholder={tx('Cari skill atau partner...', 'Search skills or partners...')}
-                    className="w-full rounded-full bg-[#FAF1E6] pl-9 pr-4 py-2 text-xs font-medium text-[#3D2317]"
-                  />
-                </form>
+              <div className="mt-4 border-t border-[#3D2317]/10 pt-4 md:hidden space-y-4 max-h-[78vh] overflow-y-auto">
+                {/* Section 1: Mobile Search */}
+                <section className="space-y-1.5">
+                  <p className="px-1 text-[10px] font-extrabold uppercase tracking-widest text-[#8C7A70]">
+                    {tx('Pencarian', 'Search')}
+                  </p>
+                  <form onSubmit={handleQuickSearch} className="relative">
+                    <Search className="pointer-events-none absolute left-3.5 top-2.5 h-3.5 w-3.5 text-[#8C7A70]" />
+                    <input
+                      type="search"
+                      value={quickSearch}
+                      onChange={(e) => setQuickSearch(e.target.value)}
+                      placeholder={tx('Cari skill atau partner...', 'Search skills or partners...')}
+                      className="w-full rounded-full border border-[#3D2317]/15 bg-white pl-9 pr-4 py-2 text-xs font-medium text-[#3D2317] shadow-sm focus:border-[#EE7838] focus:outline-none"
+                    />
+                  </form>
+                </section>
 
-                {/* Mobile 1-Click Persona Switcher */}
-                <div className="rounded-2xl bg-[#FAF1E6] p-3 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-[#4EA674]">
-                      <UserCheck className="h-3 w-3" />
-                      <span>{tx('Akun Demo Cepat (1-Klik)', 'Quick Demo Account (1-Click)')}</span>
+                {/* Section 2: Quick Demo Account (High-Contrast Separator) */}
+                <section className="rounded-2xl bg-[#3D2317] p-3.5 text-white shadow-sm space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#F6C945]">
+                      <UserCheck className="h-3.5 w-3.5 shrink-0" />
+                      <span className="truncate">{tx('Akun Demo Cepat (1-Klik)', 'Quick Demo Account (1-Click)')}</span>
                     </span>
                     {user && (
                       <button
                         type="button"
                         onClick={handleLogout}
-                        className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-0.5 text-[10px] font-extrabold text-[#9E2A32]"
+                        className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-extrabold text-[#FFD7DC] hover:bg-white/25 transition"
                       >
                         <LogOut className="h-2.5 w-2.5" />
                         <span>Sign Out</span>
@@ -604,7 +609,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         handlePersonaSwitch(e.target.value);
                       }
                     }}
-                    className="w-full rounded-xl bg-white px-2.5 py-1.5 text-xs font-bold text-[#3D2317]"
+                    className="w-full rounded-xl border border-white/15 bg-white px-3 py-2 text-xs font-bold text-[#3D2317] focus:border-[#F6C945] focus:outline-none"
                   >
                     {!user && (
                       <option value="">
@@ -622,38 +627,43 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                       </option>
                     )}
                   </select>
-                </div>
+                </section>
 
-                {/* All 10 Menus */}
-                <div className="grid grid-cols-2 gap-1.5">
-                  {navItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <NavLink
-                        key={item.to}
-                        to={item.to}
-                        onClick={() => setMobileOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center justify-between rounded-2xl px-3.5 py-2.5 text-xs font-bold transition ${
-                            isActive
-                              ? 'bg-[#F6C945] text-[#3D2317] font-extrabold'
-                              : 'bg-[#FAF1E6]/60 text-[#3D2317] hover:bg-[#FAF1E6]'
-                          }`
-                        }
-                      >
-                        <div className="flex items-center gap-2.5 truncate">
-                          <Icon className="h-4 w-4 shrink-0" />
-                          <span className="truncate">{item.label}</span>
-                        </div>
-                        {item.badge && (
-                          <span className="rounded-full bg-[#EE7838] px-1.5 py-0.2 text-[10px] font-extrabold text-white">
-                            {item.badge}
-                          </span>
-                        )}
-                      </NavLink>
-                    );
-                  })}
-                </div>
+                {/* Section 3: Main Menu */}
+                <section className="space-y-2">
+                  <p className="px-1 text-[10px] font-extrabold uppercase tracking-widest text-[#8C7A70]">
+                    {tx('Menu Utama', 'Main Menu')}
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {navItems.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          onClick={() => setMobileOpen(false)}
+                          className={({ isActive }) =>
+                            `flex items-center justify-between rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition ${
+                              isActive
+                                ? 'border-[#E0B12B] bg-[#F6C945] text-[#3D2317] font-extrabold shadow-sm'
+                                : 'border-[#3D2317]/10 bg-white text-[#3D2317] hover:bg-[#FAF1E6]'
+                            }`
+                          }
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{item.label}</span>
+                          </div>
+                          {item.badge && (
+                            <span className="shrink-0 rounded-full bg-[#EE7838] px-1.5 py-0.2 text-[10px] font-extrabold text-white">
+                              {item.badge}
+                            </span>
+                          )}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                </section>
 
                 <div className="flex items-center justify-between border-t border-[#3D2317]/10 pt-3">
                   <button
