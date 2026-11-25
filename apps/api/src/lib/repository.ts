@@ -2419,10 +2419,74 @@ export const repository = {
   > {
     const mode = await resolveStorageMode();
     if (mode === 'postgres') {
-      const rows = await getPrismaClient().communityGroup.findMany({
+      const prisma = getPrismaClient();
+      let rows = await prisma.communityGroup.findMany({
         include: { creator: { select: { displayName: true } } },
         orderBy: { createdAt: 'desc' }
       });
+
+      if (rows.length === 0) {
+        const users = await prisma.user.findMany({
+          where: { isActive: true },
+          select: { id: true, email: true },
+          take: 5
+        });
+        if (users.length > 0) {
+          const byEmail = (email: string) =>
+            users.find((u) => u.email === email)?.id || users[0].id;
+          const rakaId = byEmail('raka@demo.skillloop.id');
+          const nayaId = byEmail('naya@demo.skillloop.id');
+          const alyaId = byEmail('alya@demo.skillloop.id');
+          const dimasId = byEmail('dimas@demo.skillloop.id');
+          const farhanId = byEmail('farhan@demo.skillloop.id');
+
+          const starterGroups = [
+            {
+              name: 'Frontend & UI/UX Design Jam',
+              skillFocus: 'JavaScript ⇄ UI/UX Design',
+              categoryName: 'Web & Product Design',
+              description:
+                'Weekly hands-on circle where developers trade React & JavaScript fundamentals for Figma auto-layout, design tokens, and usability reviews.',
+              meetingLink: 'https://meet.jit.si/SkillLoop-FrontendUIUXJam',
+              scheduleNote: 'Sat . 19:30 WIB (UTC+7)',
+              creatorId: nayaId,
+              memberIds: Array.from(new Set([nayaId, rakaId, dimasId]))
+            },
+            {
+              name: 'Python Data & React Builders',
+              skillFocus: 'Python & SQL ⇄ React & TypeScript',
+              categoryName: 'Data & Fullstack',
+              description:
+                'Peer study circle connecting data & backend learners with frontend engineers to build end-to-end mini-projects together.',
+              meetingLink: 'https://meet.jit.si/SkillLoop-PythonReactBuilders',
+              scheduleNote: 'Sun . 16:00 WIB (UTC+7)',
+              creatorId: alyaId,
+              memberIds: Array.from(new Set([alyaId, farhanId, rakaId]))
+            },
+            {
+              name: 'Public Speaking & Pitching Studio',
+              skillFocus: 'Public Speaking ⇄ English Conversation',
+              categoryName: 'Languages & Communication',
+              description:
+                'Supportive weekly practice room for hackathon pitches, technical storytelling, and structured peer presentation feedback.',
+              meetingLink: 'https://meet.jit.si/SkillLoop-PitchingStudio',
+              scheduleNote: 'Wed . 20:00 WIB (UTC+7)',
+              creatorId: dimasId,
+              memberIds: Array.from(new Set([dimasId, nayaId]))
+            }
+          ];
+
+          for (const grp of starterGroups) {
+            await prisma.communityGroup.create({ data: grp });
+          }
+
+          rows = await prisma.communityGroup.findMany({
+            include: { creator: { select: { displayName: true } } },
+            orderBy: { createdAt: 'desc' }
+          });
+        }
+      }
+
       return rows.map((g) => ({
         id: g.id,
         name: g.name,

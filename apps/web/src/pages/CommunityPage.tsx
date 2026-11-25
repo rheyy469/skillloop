@@ -23,7 +23,7 @@ export function CommunityPage() {
   const [name, setName] = useState('');
   const [skillFocus, setSkillFocus] = useState('');
   const [categoryName] = useState('Web & Product Design');
-  const [scheduleNote, setScheduleNote] = useState('Sabtu . 19:30 WIB (UTC+7)');
+  const [scheduleNote, setScheduleNote] = useState('Sat . 19:30 WIB (UTC+7)');
   const [meetingLink, setMeetingLink] = useState('');
   const [description, setDescription] = useState('');
   const [creating, setCreating] = useState(false);
