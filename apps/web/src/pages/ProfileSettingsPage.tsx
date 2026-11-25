@@ -343,7 +343,7 @@ export function ProfileSettingsPage() {
                   htmlFor="profDisplayName"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Nama Tampilan
+                  {tx('Nama Tampilan', 'Display Name')}
                 </label>
                 <input
                   id="profDisplayName"
@@ -370,7 +370,7 @@ export function ProfileSettingsPage() {
                   maxLength={30}
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="nama_pengguna"
+                  placeholder={tx('nama_pengguna', 'username')}
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-medium text-[#3D2317] focus:outline-none"
                 />
               </div>
@@ -381,7 +381,7 @@ export function ProfileSettingsPage() {
                 htmlFor="profBio"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Bio Singkat
+                {tx('Bio Singkat', 'Short Bio')}
               </label>
               <textarea
                 id="profBio"
@@ -399,7 +399,7 @@ export function ProfileSettingsPage() {
                   htmlFor="profTimezone"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Zona Waktu (IANA)
+                  {tx('Zona Waktu (IANA)', 'Timezone (IANA)')}
                 </label>
                 <select
                   id="profTimezone"
@@ -420,7 +420,7 @@ export function ProfileSettingsPage() {
                   htmlFor="profLearningMethod"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Metode Pembelajaran
+                  {tx('Metode Pembelajaran', 'Learning Method')}
                 </label>
                 <select
                   id="profLearningMethod"
@@ -429,7 +429,7 @@ export function ProfileSettingsPage() {
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-bold text-[#3D2317] focus:outline-none"
                 >
                   <option value="Online 1-on-1 . Praktik & Diskusi">
-                    Online 1-on-1 . Praktik & Diskusi
+                    {tx('Online 1-on-1 . Praktik & Diskusi', 'Online 1-on-1 . Practice & Discussion')}
                   </option>
                   <option value="Pair Programming / Co-Design">
                     Pair Programming / Co-Design
@@ -446,7 +446,7 @@ export function ProfileSettingsPage() {
                 htmlFor="profAvailability"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Ketersediaan Waktu
+                {tx('Ketersediaan Waktu', 'Availability Window')}
               </label>
               <select
                 id="profAvailability"
@@ -455,20 +455,20 @@ export function ProfileSettingsPage() {
                 className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-bold text-[#3D2317] focus:outline-none"
               >
                 <option value="Weekday Malam (19:00-21:00) & Akhir Pekan">
-                  Weekday Malam (19:00-21:00) & Akhir Pekan
+                  {tx('Weekday Malam (19:00-21:00) & Akhir Pekan', 'Weekday Evenings (19:00-21:00) & Weekends')}
                 </option>
                 <option value="Akhir Pekan (Sabtu & Minggu Fleksibel)">
-                  Akhir Pekan (Sabtu & Minggu Fleksibel)
+                  {tx('Akhir Pekan (Sabtu & Minggu Fleksibel)', 'Weekends (Flexible Sat & Sun)')}
                 </option>
                 <option value="Weekday Pagi / Sore Fleksibel">
-                  Weekday Pagi / Sore Fleksibel
+                  {tx('Weekday Pagi / Sore Fleksibel', 'Flexible Weekday Mornings / Afternoons')}
                 </option>
               </select>
             </div>
 
             <div>
               <span className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]">
-                Bahasa Komunikasi
+                {tx('Bahasa Komunikasi', 'Communication Languages')}
               </span>
               <div className="mt-2 flex flex-wrap gap-2">
                 {SUPPORTED_LANGUAGES.map((l) => {
@@ -496,7 +496,7 @@ export function ProfileSettingsPage() {
               disabled={saving}
               className="mt-3 inline-flex items-center gap-3 rounded-full bg-[#F6C945] pl-6 pr-2.5 py-2.5 text-xs font-extrabold text-[#3D2317] hover:bg-[#EE7838] hover:text-white transition shadow-md"
             >
-              <span>{saving ? 'Menyimpan...' : 'Simpan Profil'}</span>
+              <span>{saving ? tx('Menyimpan...', 'Saving...') : tx('Simpan Profil', 'Save Profile')}</span>
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#3D2317]">
                 <BookOpen className="h-3 w-3" />
               </span>
@@ -509,12 +509,12 @@ export function ProfileSettingsPage() {
           <div className="rounded-[28px] bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <h2 className="text-base font-extrabold text-[#3D2317]">
-                Verifikasi Email
+                {tx('Verifikasi Email', 'Email Verification')}
               </h2>
               {emailVerified && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-[#4EA674]/20 px-3 py-0.5 text-[11px] font-extrabold text-[#2B6E48]">
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span>Terverifikasi</span>
+                  <span>{tx('Terverifikasi', 'Verified')}</span>
                 </span>
               )}
             </div>
@@ -527,7 +527,9 @@ export function ProfileSettingsPage() {
               onClick={handleVerifyEmail}
               className="mt-3 text-xs font-extrabold text-[#EE7838] hover:underline"
             >
-              {verifyingEmail ? 'Memeriksa...' : 'Cek Status Verifikasi'}
+              {verifyingEmail
+                ? tx('Memeriksa...', 'Checking...')
+                : tx('Cek Status Verifikasi', 'Check Verification Status')}
             </button>
           </div>
 
@@ -535,7 +537,7 @@ export function ProfileSettingsPage() {
             <div className="flex items-center gap-2">
               <Lock className="h-4 w-4 text-[#EE7838]" />
               <h2 className="text-base font-extrabold text-[#3D2317]">
-                Ubah Password
+                {tx('Ubah Password', 'Change Password')}
               </h2>
             </div>
 
@@ -545,7 +547,7 @@ export function ProfileSettingsPage() {
                 required
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Password saat ini"
+                placeholder={tx('Password saat ini', 'Current password')}
                 className="w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
               <input
@@ -554,7 +556,7 @@ export function ProfileSettingsPage() {
                 minLength={8}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Password baru (min. 8 karakter)"
+                placeholder={tx('Password baru (min. 8 karakter)', 'New password (min. 8 characters)')}
                 className="w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
               <button
@@ -562,26 +564,49 @@ export function ProfileSettingsPage() {
                 disabled={changingPassword}
                 className="w-full rounded-full bg-[#3D2317] px-5 py-2.5 text-xs font-extrabold text-white"
               >
-                {changingPassword ? 'Memperbarui...' : 'Perbarui Password'}
+                {changingPassword
+                  ? tx('Memperbarui...', 'Updating...')
+                  : tx('Perbarui Password', 'Update Password')}
               </button>
             </form>
           </div>
 
           <div className="rounded-[28px] bg-white p-6 shadow-sm space-y-4">
             <h2 className="text-base font-extrabold text-[#3D2317]">
-              Notifikasi, Privasi & Bahasa
+              {tx('Notifikasi, Privasi & Bahasa', 'Notifications, Privacy & Language')}
             </h2>
 
             <div className="space-y-2 text-xs">
               {(
                 [
-                  { key: 'notifyNewRequest', label: 'New Exchange Request (Permintaan pertukaran baru)' },
-                  { key: 'notifyRequestAccepted', label: 'Request Accepted (Kesepakatan diterima)' },
-                  { key: 'notifySessionUpdates', label: 'Upcoming Session & Session Updates' },
-                  { key: 'notifyNewFeedback', label: 'New Feedback & Reputation Rating' },
-                  { key: 'showTimezonePublicly', label: 'Tampilkan Zona Waktu pada Profil Publik' },
-                  { key: 'showPortfolioPublicly', label: 'Tampilkan Tautan Portfolio Showcase' },
-                  { key: 'showHistoryPublicly', label: 'Tampilkan Riwayat Sesi & Reputasi Komunitas' }
+                  {
+                    key: 'notifyNewRequest',
+                    label: tx('Permintaan pertukaran baru', 'New Exchange Request')
+                  },
+                  {
+                    key: 'notifyRequestAccepted',
+                    label: tx('Kesepakatan pertukaran diterima', 'Request Accepted')
+                  },
+                  {
+                    key: 'notifySessionUpdates',
+                    label: tx('Jadwal & pembaruan sesi belajar', 'Upcoming Session & Session Updates')
+                  },
+                  {
+                    key: 'notifyNewFeedback',
+                    label: tx('Ulasan & rating reputasi baru', 'New Feedback & Reputation Rating')
+                  },
+                  {
+                    key: 'showTimezonePublicly',
+                    label: tx('Tampilkan Zona Waktu pada Profil Publik', 'Show Timezone on Public Profile')
+                  },
+                  {
+                    key: 'showPortfolioPublicly',
+                    label: tx('Tampilkan Tautan Portfolio Showcase', 'Show Portfolio Showcase Links')
+                  },
+                  {
+                    key: 'showHistoryPublicly',
+                    label: tx('Tampilkan Riwayat Sesi & Reputasi Komunitas', 'Show Session History & Reputation')
+                  }
                 ] as const
               ).map((item) => (
                 <label
@@ -625,17 +650,19 @@ export function ProfileSettingsPage() {
               onClick={handleSavePreferences}
               className="w-full rounded-full bg-[#F6C945] px-5 py-2.5 text-xs font-extrabold text-[#3D2317]"
             >
-              {savingPrefs ? 'Menyimpan...' : 'Simpan Pengaturan'}
+              {savingPrefs
+                ? tx('Menyimpan...', 'Saving...')
+                : tx('Simpan Pengaturan', 'Save Settings')}
             </button>
           </div>
 
           <div className="rounded-[28px] bg-white p-6 shadow-sm">
             <h2 className="text-base font-extrabold text-[#3D2317]">
-              Pengguna Diblokir ({blocks.length})
+              {tx('Pengguna Diblokir', 'Blocked Users')} ({blocks.length})
             </h2>
             {blocks.length === 0 ? (
               <p className="mt-2 text-xs text-[#8C7A70]">
-                Tidak ada pengguna yang diblokir.
+                {tx('Tidak ada pengguna yang diblokir.', 'No blocked users.')}
               </p>
             ) : (
               <div className="mt-3 divide-y divide-[#3D2317]/8">
@@ -652,7 +679,7 @@ export function ProfileSettingsPage() {
                       onClick={() => handleUnblock(b.blockedId)}
                       className="rounded-full bg-[#FAF1E6] px-3.5 py-1 text-xs font-bold text-[#3D2317]"
                     >
-                      Buka Blokir
+                      {tx('Buka Blokir', 'Unblock')}
                     </button>
                   </div>
                 ))}

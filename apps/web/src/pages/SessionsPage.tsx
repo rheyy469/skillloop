@@ -277,7 +277,7 @@ export function SessionsPage() {
           aria-label="Filter status sesi"
           className="rounded-full bg-white px-4 py-2.5 text-xs font-bold text-[#3D2317] shadow-sm focus:outline-none"
         >
-          <option value="">Semua Status Sesi</option>
+          <option value="">{tx('Semua Status Sesi', 'All Session Statuses')}</option>
           <option value="PROPOSED">PROPOSED</option>
           <option value="SCHEDULED">SCHEDULED</option>
           <option value="COMPLETED">COMPLETED</option>
@@ -309,13 +309,13 @@ export function SessionsPage() {
         <div className="rounded-[32px] bg-white p-12 text-center shadow-sm">
           <Clock className="mx-auto h-10 w-10 text-[#EE7838]" />
           <h2 className="mt-3 text-base font-extrabold text-[#3D2317]">
-            Belum ada sesi belajar terjadwal
+            {tx('Belum ada sesi belajar terjadwal', 'No scheduled learning sessions yet')}
           </h2>
           <Link
             to="/requests"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#F6C945] px-6 py-2.5 text-xs font-extrabold text-[#3D2317]"
           >
-            <span>Buka Permintaan Pertukaran</span>
+            <span>{tx('Buka Permintaan Pertukaran', 'Open Exchange Requests')}</span>
           </Link>
         </div>
       ) : (
@@ -486,7 +486,7 @@ export function SessionsPage() {
             Learning Progress
           </span>
           <h2 className="mt-2 text-lg font-extrabold text-[#3D2317]">
-            Tambah Milestone Belajar
+            {tx('Tambah Milestone Belajar', 'Add Learning Milestone')}
           </h2>
 
           <form onSubmit={handleAddMilestone} className="mt-4 space-y-3.5">
@@ -495,7 +495,7 @@ export function SessionsPage() {
                 htmlFor="msTitle"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Target Pembelajaran
+                {tx('Target Pembelajaran', 'Learning Target')}
               </label>
               <input
                 id="msTitle"
@@ -505,7 +505,10 @@ export function SessionsPage() {
                 maxLength={120}
                 value={milestoneTitle}
                 onChange={(e) => setMilestoneTitle(e.target.value)}
-                placeholder="Contoh: Auto-Layout & Variants di Figma"
+                placeholder={tx(
+                  'Contoh: Auto-Layout & Variants di Figma',
+                  'e.g., Auto-Layout & Variants in Figma'
+                )}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -515,7 +518,7 @@ export function SessionsPage() {
                 htmlFor="msProgress"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Persentase Capaian ({milestoneProgress}%)
+                {tx('Persentase Capaian', 'Progress Percentage')} ({milestoneProgress}%)
               </label>
               <input
                 id="msProgress"
@@ -534,7 +537,7 @@ export function SessionsPage() {
                 htmlFor="msNotes"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Catatan Belajar
+                {tx('Catatan Belajar', 'Learning Notes')}
               </label>
               <textarea
                 id="msNotes"
@@ -542,7 +545,10 @@ export function SessionsPage() {
                 maxLength={400}
                 value={milestoneNotes}
                 onChange={(e) => setMilestoneNotes(e.target.value)}
-                placeholder="Ringkasan materi yang sudah dipahami..."
+                placeholder={tx(
+                  'Ringkasan materi yang sudah dipahami...',
+                  'Summary of topics mastered so far...'
+                )}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -553,7 +559,11 @@ export function SessionsPage() {
               className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#F6C945] px-5 py-3 text-xs font-extrabold text-[#3D2317] hover:bg-[#EE7838] hover:text-white transition shadow-sm"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>{creatingMilestone ? 'Menyimpan...' : 'Simpan Milestone'}</span>
+              <span>
+                {creatingMilestone
+                  ? tx('Menyimpan...', 'Saving...')
+                  : tx('Simpan Milestone', 'Save Milestone')}
+              </span>
             </button>
           </form>
         </div>
@@ -563,17 +573,20 @@ export function SessionsPage() {
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-[#4EA674]" />
               <h2 className="text-base font-extrabold text-[#3D2317]">
-                Daftar Milestones ({milestones.length})
+                {tx('Daftar Milestones', 'Milestones List')} ({milestones.length})
               </h2>
             </div>
             <span className="text-xs font-bold text-[#8C7A70]">
-              {milestones.filter((m) => m.isCompleted).length} selesai
+              {milestones.filter((m) => m.isCompleted).length} {tx('selesai', 'completed')}
             </span>
           </div>
 
           {milestones.length === 0 ? (
             <p className="py-8 text-center text-xs text-[#8C7A70]">
-              Belum ada milestone pembelajaran yang dicatat.
+              {tx(
+                'Belum ada milestone pembelajaran yang dicatat.',
+                'No learning milestones recorded yet.'
+              )}
             </p>
           ) : (
             <div className="space-y-3">

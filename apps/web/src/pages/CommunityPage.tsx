@@ -186,12 +186,12 @@ export function CommunityPage() {
                         {joined ? (
                           <>
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>Terdaftar</span>
+                            <span>{tx('Terdaftar', 'Joined')}</span>
                           </>
                         ) : (
                           <>
                             <Users className="h-3.5 w-3.5" />
-                            <span>Gabung</span>
+                            <span>{tx('Gabung', 'Join')}</span>
                           </>
                         )}
                       </button>
@@ -208,7 +208,7 @@ export function CommunityPage() {
                       <span>{g.scheduleNote}</span>
                     </span>
                     <span>
-                      Inisiator: <strong className="text-[#3D2317]">{g.creatorName}</strong>
+                      {tx('Inisiator:', 'Host:')} <strong className="text-[#3D2317]">{g.creatorName}</strong>
                     </span>
                   </div>
                 </div>
@@ -220,10 +220,10 @@ export function CommunityPage() {
         {/* Create New Learning Group Form */}
         <div className="lg:col-span-4 rounded-[28px] bg-white p-6 shadow-sm">
           <span className="inline-block rounded-full bg-[#F6C945] px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#3D2317]">
-            Buat Kelompok Baru
+            {tx('Buat Kelompok Baru', 'Create New Circle')}
           </span>
           <h2 className="mt-2 text-lg font-extrabold text-[#3D2317]">
-            Bentuk Community Circle
+            {tx('Bentuk Community Circle', 'Start a Community Circle')}
           </h2>
 
           <form onSubmit={handleCreateGroup} className="mt-4 space-y-3.5">
@@ -232,7 +232,7 @@ export function CommunityPage() {
                 htmlFor="grpName"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Nama Kelompok
+                {tx('Nama Kelompok', 'Circle Name')}
               </label>
               <input
                 id="grpName"
@@ -241,7 +241,7 @@ export function CommunityPage() {
                 minLength={3}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Contoh: TypeScript & UI Design Jam"
+                placeholder={tx('Contoh: TypeScript & UI Design Jam', 'e.g., TypeScript & UI Design Jam')}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -251,7 +251,7 @@ export function CommunityPage() {
                 htmlFor="grpFocus"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Skill yang Dipertukarkan
+                {tx('Skill yang Dipertukarkan', 'Exchanged Skills')}
               </label>
               <input
                 id="grpFocus"
@@ -260,7 +260,7 @@ export function CommunityPage() {
                 minLength={3}
                 value={skillFocus}
                 onChange={(e) => setSkillFocus(e.target.value)}
-                placeholder="Contoh: TypeScript ⇄ Figma"
+                placeholder={tx('Contoh: TypeScript ⇄ Figma', 'e.g., TypeScript ⇄ Figma')}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -270,7 +270,7 @@ export function CommunityPage() {
                 htmlFor="grpSchedule"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Jadwal Pertemuan
+                {tx('Jadwal Pertemuan', 'Meeting Schedule')}
               </label>
               <input
                 id="grpSchedule"
@@ -287,14 +287,14 @@ export function CommunityPage() {
                 htmlFor="grpLink"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Tautan Video Room (Opsional)
+                {tx('Tautan Video Room (Opsional)', 'Video Room Link (Optional)')}
               </label>
               <input
                 id="grpLink"
                 type="text"
                 value={meetingLink}
                 onChange={(e) => setMeetingLink(e.target.value)}
-                placeholder="Otomatis Jitsi jika kosong"
+                placeholder={tx('Otomatis Jitsi jika kosong', 'Auto-generated Jitsi link if empty')}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -304,7 +304,7 @@ export function CommunityPage() {
                 htmlFor="grpDesc"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Deskripsi Kelompok
+                {tx('Deskripsi Kelompok', 'Circle Description')}
               </label>
               <textarea
                 id="grpDesc"
@@ -313,7 +313,7 @@ export function CommunityPage() {
                 rows={3}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Jelaskan topik diskusi..."
+                placeholder={tx('Jelaskan topik diskusi...', 'Describe discussion topics...')}
                 className="mt-1 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] focus:outline-none"
               />
             </div>
@@ -324,7 +324,11 @@ export function CommunityPage() {
               className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#F6C945] px-5 py-3 text-xs font-extrabold text-[#3D2317] hover:bg-[#EE7838] hover:text-white transition shadow-sm"
             >
               <Plus className="h-3.5 w-3.5" />
-              <span>{creating ? 'Membuat...' : 'Buat Kelompok Belajar'}</span>
+              <span>
+                {creating
+                  ? tx('Membuat...', 'Creating...')
+                  : tx('Buat Kelompok Belajar', 'Create Study Circle')}
+              </span>
             </button>
           </form>
         </div>

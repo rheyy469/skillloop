@@ -141,7 +141,7 @@ export function DiscoverPage() {
               aria-label="Filter kategori skill"
               className="w-full rounded-full bg-[#FAF1E6] px-4 py-2.5 text-xs font-bold text-[#3D2317] focus:outline-none"
             >
-              <option value="">Semua Kategori</option>
+              <option value="">{tx('Semua Kategori', 'All Categories')}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.slug}>
                   {c.name}
@@ -157,7 +157,7 @@ export function DiscoverPage() {
               aria-label="Filter bahasa"
               className="w-full rounded-full bg-[#FAF1E6] px-4 py-2.5 text-xs font-bold text-[#3D2317] focus:outline-none"
             >
-              <option value="">Semua Bahasa</option>
+              <option value="">{tx('Semua Bahasa', 'All Languages')}</option>
               {SUPPORTED_LANGUAGES.map((l) => (
                 <option key={l.code} value={l.code}>
                   {l.name}
@@ -173,9 +173,9 @@ export function DiscoverPage() {
               aria-label="Filter ketersediaan jadwal"
               className="w-full rounded-full bg-[#FAF1E6] px-4 py-2.5 text-xs font-bold text-[#3D2317] focus:outline-none"
             >
-              <option value="">Semua Jadwal</option>
-              <option value="compatible">Jadwal Cocok (&ge;80%)</option>
-              <option value="same_timezone">Zona Waktu Sama</option>
+              <option value="">{tx('Semua Jadwal', 'All Schedules')}</option>
+              <option value="compatible">{tx('Jadwal Cocok (>=80%)', 'Compatible Schedule (>=80%)')}</option>
+              <option value="same_timezone">{tx('Zona Waktu Sama', 'Same Timezone')}</option>
             </select>
           </div>
 
@@ -186,7 +186,7 @@ export function DiscoverPage() {
               aria-label="Filter level pengajar"
               className="w-full rounded-full bg-[#FAF1E6] px-4 py-2.5 text-xs font-bold text-[#3D2317] focus:outline-none"
             >
-              <option value="">Semua Level</option>
+              <option value="">{tx('Semua Level', 'All Levels')}</option>
               <option value="BEGINNER">Beginner</option>
               <option value="INTERMEDIATE">Intermediate</option>
               <option value="ADVANCED">Advanced</option>
@@ -196,7 +196,7 @@ export function DiscoverPage() {
               <button
                 type="button"
                 onClick={resetFilters}
-                title="Reset filter"
+                title={tx('Reset filter', 'Reset filters')}
                 className="shrink-0 rounded-full bg-[#FAF1E6] p-2.5 text-[#3D2317] hover:bg-[#F4979C]/40 transition"
               >
                 <RotateCcw className="h-4 w-4" />
@@ -218,7 +218,7 @@ export function DiscoverPage() {
                 onChange={(e) => setMinScoreFilter(Number(e.target.value))}
                 className="rounded-full bg-[#FAF1E6] px-3 py-1 text-xs font-extrabold text-[#3D2317]"
               >
-                <option value={0}>Semua Skor</option>
+                <option value={0}>{tx('Semua Skor', 'All Scores')}</option>
                 <option value={80}>&ge; 80% (Strong Match)</option>
                 <option value={90}>&ge; 90% (Top Reciprocal Fit)</option>
               </select>
@@ -226,15 +226,15 @@ export function DiscoverPage() {
           </div>
 
           <label className="inline-flex items-center gap-2 font-bold text-[#3D2317]">
-            <span>Urutkan Ranking:</span>
+            <span>{tx('Urutkan Ranking:', 'Sort Ranking:')}</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
               className="rounded-full bg-[#FAF1E6] px-3 py-1 text-xs font-extrabold text-[#3D2317]"
             >
               <option value="overall">Overall Reciprocal Score (Default)</option>
-              <option value="availability">Ketersediaan Waktu (Availability Fit)</option>
-              <option value="completeness">Kelengkapan Profil Partner</option>
+              <option value="availability">{tx('Ketersediaan Waktu (Availability Fit)', 'Schedule Availability (Availability Fit)')}</option>
+              <option value="completeness">{tx('Kelengkapan Profil Partner', 'Partner Profile Completeness')}</option>
             </select>
           </label>
         </div>
@@ -251,10 +251,13 @@ export function DiscoverPage() {
         <div className="rounded-[32px] bg-white p-12 text-center shadow-sm">
           <ArrowLeftRight className="mx-auto h-10 w-10 text-[#EE7838]" />
           <h2 className="mt-3 text-base font-extrabold text-[#3D2317]">
-            Belum ada kandidat reciprocal match
+            {tx('Belum ada kandidat reciprocal match', 'No reciprocal match candidates yet')}
           </h2>
           <p className="mx-auto mt-1 max-w-md text-xs text-[#8C7A70]">
-            Kandidat hanya muncul saat ada kecocokan dua arah. Tambahkan keahlian pada daftar <strong>Can Teach</strong> atau <strong>Want to Learn</strong>.
+            {tx(
+              'Kandidat hanya muncul saat ada kecocokan dua arah. Tambahkan keahlian pada daftar Can Teach atau Want to Learn.',
+              'Candidates only appear when there is a mutual two-way match. Add skills to your Can Teach or Want to Learn lists.'
+            )}
           </p>
           <div className="mt-5 flex justify-center gap-3">
             {hasActiveFilters && (
@@ -263,14 +266,14 @@ export function DiscoverPage() {
                 onClick={resetFilters}
                 className="rounded-full bg-[#FAF1E6] px-5 py-2.5 text-xs font-bold text-[#3D2317]"
               >
-                Reset Filter
+                {tx('Reset Filter', 'Reset Filters')}
               </button>
             )}
             <Link
               to="/skills"
               className="rounded-full bg-[#F6C945] px-6 py-2.5 text-xs font-extrabold text-[#3D2317]"
             >
-              Tambah Skill
+              {tx('Tambah Skill', 'Add Skill')}
             </Link>
           </div>
         </div>

@@ -232,9 +232,9 @@ export function RequestsPage() {
         <div className="flex items-center gap-1 rounded-full bg-white p-1.5 shadow-sm">
           {(
             [
-              { id: 'all', label: 'Semua' },
-              { id: 'incoming', label: 'Masuk' },
-              { id: 'outgoing', label: 'Keluar' }
+              { id: 'all', label: tx('Semua', 'All') },
+              { id: 'incoming', label: tx('Masuk', 'Incoming') },
+              { id: 'outgoing', label: tx('Keluar', 'Outgoing') }
             ] as const
           ).map((tab) => (
             <button
@@ -258,7 +258,7 @@ export function RequestsPage() {
           aria-label="Filter status request"
           className="rounded-full bg-white px-4 py-2 text-xs font-bold text-[#3D2317] shadow-sm focus:outline-none"
         >
-          <option value="">Semua Status</option>
+          <option value="">{tx('Semua Status', 'All Statuses')}</option>
           <option value="PENDING">PENDING</option>
           <option value="ACCEPTED">ACCEPTED</option>
           <option value="REJECTED">REJECTED</option>
@@ -276,10 +276,13 @@ export function RequestsPage() {
       ) : requests.length === 0 ? (
         <div className="rounded-[32px] bg-white p-12 text-center shadow-sm">
           <p className="text-base font-extrabold text-[#3D2317]">
-            Tidak ada permintaan kolaborasi
+            {tx('Tidak ada permintaan kolaborasi', 'No collaboration requests yet')}
           </p>
           <p className="mt-1 text-xs text-[#8C7A70]">
-            Buka halaman Cari Partner untuk menemukan partner pertukaran baru.
+            {tx(
+              'Buka halaman Cari Partner untuk menemukan partner pertukaran baru.',
+              'Visit Discover Partners to find new reciprocal skill exchange partners.'
+            )}
           </p>
         </div>
       ) : (

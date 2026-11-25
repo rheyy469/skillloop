@@ -210,7 +210,7 @@ export function SkillsPage() {
             <form onSubmit={handleAddSkill} className="mt-5 space-y-4">
               <div>
                 <label className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]">
-                  Peran (Role)
+                  {tx('Peran (Role)', 'Role')}
                 </label>
                 <div className="mt-2 grid grid-cols-2 gap-2.5">
                   <button
@@ -249,7 +249,7 @@ export function SkillsPage() {
                   htmlFor="skillSelect"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Skill Kanonis
+                  {tx('Skill Kanonis', 'Canonical Skill')}
                 </label>
                 <select
                   id="skillSelect"
@@ -270,7 +270,9 @@ export function SkillsPage() {
                   htmlFor="levelSelect"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  {role === 'TEACH' ? 'Tingkat Kemampuan' : 'Target Level'}
+                  {role === 'TEACH'
+                    ? tx('Tingkat Kemampuan', 'Proficiency Level')
+                    : tx('Target Level', 'Target Level')}
                 </label>
                 <select
                   id="levelSelect"
@@ -279,11 +281,20 @@ export function SkillsPage() {
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-bold text-[#3D2317] focus:outline-none"
                 >
                   {(['BEGINNER', 'INTERMEDIATE', 'ADVANCED'] as SkillLevel[]).map(
-                    (lvl) => (
-                      <option key={lvl} value={lvl}>
-                        {SKILL_LEVEL_LABELS[lvl].label} — {SKILL_LEVEL_LABELS[lvl].helper}
-                      </option>
-                    )
+                    (lvl) => {
+                      const helperEn =
+                        lvl === 'BEGINNER'
+                          ? 'Understands basics and still needs guidance (not a formal certification)'
+                          : lvl === 'INTERMEDIATE'
+                          ? 'Can apply the skill in common tasks or projects'
+                          : 'Broad experience and able to handle complex cases';
+                      return (
+                        <option key={lvl} value={lvl}>
+                          {SKILL_LEVEL_LABELS[lvl].label} —{' '}
+                          {tx(SKILL_LEVEL_LABELS[lvl].helper, helperEn)}
+                        </option>
+                      );
+                    }
                   )}
                 </select>
               </div>
@@ -293,7 +304,7 @@ export function SkillsPage() {
                   htmlFor="methodPreference"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Metode Preferensi
+                  {tx('Metode Preferensi', 'Preferred Method')}
                 </label>
                 <select
                   id="methodPreference"
@@ -302,13 +313,13 @@ export function SkillsPage() {
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-bold text-[#3D2317] focus:outline-none"
                 >
                   <option value="Live 1-on-1 & Praktik Langsung">
-                    Live 1-on-1 & Praktik Langsung
+                    {tx('Live 1-on-1 & Praktik Langsung', 'Live 1-on-1 & Hands-on Practice')}
                   </option>
                   <option value="Project-Based / Pair Session">
                     Project-Based / Pair Session
                   </option>
                   <option value="Code / Design Review & Diskusi">
-                    Code / Design Review & Diskusi
+                    {tx('Code / Design Review & Diskusi', 'Code / Design Review & Discussion')}
                   </option>
                 </select>
               </div>
@@ -319,7 +330,7 @@ export function SkillsPage() {
                     htmlFor="portfolioUrl"
                     className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                   >
-                    Portfolio Showcase (Opsional)
+                    {tx('Portfolio Showcase (Opsional)', 'Portfolio Showcase (Optional)')}
                   </label>
                   <input
                     id="portfolioUrl"
@@ -327,7 +338,10 @@ export function SkillsPage() {
                     maxLength={120}
                     value={portfolioUrl}
                     onChange={(e) => setPortfolioUrl(e.target.value)}
-                    placeholder="github.com/username atau figma.com/@profile"
+                    placeholder={tx(
+                      'github.com/username atau figma.com/@profile',
+                      'github.com/username or figma.com/@profile'
+                    )}
                     className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none"
                   />
                 </div>
@@ -338,7 +352,9 @@ export function SkillsPage() {
                   htmlFor="skillDesc"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  {role === 'TEACH' ? 'Topik Bahasan' : 'Tujuan Pembelajaran'}
+                  {role === 'TEACH'
+                    ? tx('Topik Bahasan', 'Teaching Topics')
+                    : tx('Tujuan Pembelajaran', 'Learning Goals')}
                 </label>
                 <textarea
                   id="skillDesc"
@@ -348,8 +364,14 @@ export function SkillsPage() {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={
                     role === 'TEACH'
-                      ? 'Contoh: Membuat REST API dengan TypeScript...'
-                      : 'Contoh: Memperdalam dasar Figma dan design token...'
+                      ? tx(
+                          'Contoh: Membuat REST API dengan TypeScript...',
+                          'e.g., Building REST APIs with TypeScript...'
+                        )
+                      : tx(
+                          'Contoh: Memperdalam dasar Figma dan design token...',
+                          'e.g., Mastering Figma fundamentals and design tokens...'
+                        )
                   }
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-2.5 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none"
                 />
@@ -360,7 +382,11 @@ export function SkillsPage() {
                 disabled={submitting || !selectedSkillId}
                 className="w-full inline-flex items-center justify-center gap-3 rounded-full bg-[#F6C945] px-6 py-3 text-xs font-extrabold text-[#3D2317] hover:bg-[#EE7838] hover:text-white disabled:opacity-50 transition shadow-md"
               >
-                <span>{submitting ? 'Menyimpan...' : 'Simpan Deklarasi Skill'}</span>
+                <span>
+                  {submitting
+                    ? tx('Menyimpan...', 'Saving...')
+                    : tx('Simpan Deklarasi Skill', 'Save Skill Declaration')}
+                </span>
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#3D2317]">
                   <BookOpen className="h-3 w-3" />
                 </span>
@@ -384,7 +410,10 @@ export function SkillsPage() {
 
             {teachSkills.length === 0 ? (
               <p className="mt-4 text-xs text-[#8C7A70]">
-                Belum ada skill yang didaftarkan untuk diajarkan.
+                {tx(
+                  'Belum ada skill yang didaftarkan untuk diajarkan.',
+                  'No teaching skills declared yet.'
+                )}
               </p>
             ) : (
               <div className="mt-3 divide-y divide-[#3D2317]/8">
@@ -438,7 +467,10 @@ export function SkillsPage() {
 
             {learnSkills.length === 0 ? (
               <p className="mt-4 text-xs text-[#8C7A70]">
-                Belum ada skill yang didaftarkan untuk dipelajari.
+                {tx(
+                  'Belum ada skill yang didaftarkan untuk dipelajari.',
+                  'No learning skills declared yet.'
+                )}
               </p>
             ) : (
               <div className="mt-3 divide-y divide-[#3D2317]/8">

@@ -157,13 +157,13 @@ export function MessagesPage() {
         <div className="rounded-[32px] bg-white p-12 text-center shadow-sm">
           <MessageSquare className="mx-auto h-10 w-10 text-[#EE7838]" />
           <h2 className="mt-3 text-base font-extrabold text-[#3D2317]">
-            Belum ada ruang pesan pertukaran aktif
+            {tx('Belum ada ruang pesan pertukaran aktif', 'No active exchange message threads yet')}
           </h2>
           <Link
             to="/discover"
             className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#F6C945] px-6 py-2.5 text-xs font-extrabold text-[#3D2317]"
           >
-            <span>Cari Partner</span>
+            <span>{tx('Cari Partner', 'Discover Partners')}</span>
           </Link>
         </div>
       ) : (
