@@ -1067,31 +1067,31 @@ export function DashboardPage() {
         </section>
 
         {/* 5. INTERACTIVE EXCHANGE TO-DO LIST (With Book/Notebook Capsule Illustration) */}
-        <section className="grid items-center gap-10 lg:grid-cols-12 pt-2">
-          <div className="lg:col-span-4 flex justify-center">
-            <div className="relative flex flex-col items-center justify-between rounded-full bg-[#F6C945] w-40 h-64 p-5 shadow-md">
+        <section className="grid items-center gap-6 sm:gap-10 lg:grid-cols-12 pt-2 min-w-0">
+          <div className="lg:col-span-4 flex justify-center min-w-0">
+            <div className="relative flex flex-col items-center justify-between rounded-full bg-[#F6C945] w-36 h-56 sm:w-40 sm:h-64 p-4 sm:p-5 shadow-md">
               <Link
                 to="/sessions"
-                className="flex h-20 w-20 items-center justify-center rounded-full border-2 border-white/80 bg-[#F6C945] hover:scale-105 transition"
+                className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full border-2 border-white/80 bg-[#F6C945] hover:scale-105 transition"
               >
-                <BookOpen className="h-8 w-8 text-white" />
+                <BookOpen className="h-7 w-7 sm:h-8 sm:w-8 text-white" />
               </Link>
               <div className="flex flex-col items-center">
-                <div className="h-5 w-2.5 rounded-full bg-[#EE7838] mb-1" />
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#3D2317] text-white shadow-lg">
-                  <FileText className="h-10 w-10 text-[#F6C945]" />
+                <div className="h-4 sm:h-5 w-2.5 rounded-full bg-[#EE7838] mb-1" />
+                <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-[#3D2317] text-white shadow-lg">
+                  <FileText className="h-8 w-8 sm:h-10 sm:w-10 text-[#F6C945]" />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-8 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-2xl font-extrabold text-[#3D2317]">
+          <div className="lg:col-span-8 space-y-4 min-w-0">
+            <div className="flex flex-wrap items-center justify-between gap-2 min-w-0">
+              <h2 className="text-xl sm:text-2xl font-extrabold text-[#3D2317] break-words">
                 {tx('Exchange To Do List & Readiness', 'Exchange To Do List & Readiness')}
               </h2>
 
-              <div className="flex items-center gap-1.5 text-[11px] font-bold">
+              <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
                 <button
                   type="button"
                   onClick={() => setTodoTab('all')}
@@ -1128,15 +1128,15 @@ export function DashboardPage() {
               </div>
             </div>
 
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-2.5 pt-1 min-w-0">
               {visibleTodos.map((item) => {
                 const done = isTodoDone(item);
                 return (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between gap-3 rounded-2xl bg-[#FAF1E6]/70 px-4 py-3 transition hover:bg-[#FAF1E6]"
+                    className="flex items-center justify-between gap-2.5 sm:gap-3 rounded-2xl bg-[#FAF1E6]/70 px-3 sm:px-4 py-3 transition hover:bg-[#FAF1E6] min-w-0"
                   >
-                    <div className="flex items-center gap-3 min-w-0">
+                    <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
                       <button
                         type="button"
                         onClick={() =>
@@ -1154,7 +1154,7 @@ export function DashboardPage() {
                       >
                         <Check className="h-3.5 w-3.5 stroke-[3]" />
                       </button>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <Link
                           to={item.to}
                           className={`block truncate text-xs sm:text-sm font-extrabold hover:underline ${
@@ -1171,9 +1171,9 @@ export function DashboardPage() {
 
                     <Link
                       to={item.to}
-                      className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[11px] font-extrabold text-[#3D2317] shadow-sm hover:bg-[#F6C945] transition"
+                      className="shrink-0 inline-flex items-center gap-1.5 rounded-full bg-white px-2.5 sm:px-3 py-1 text-[11px] font-extrabold text-[#3D2317] shadow-sm hover:bg-[#F6C945] transition"
                     >
-                      <BookOpen className="h-3 w-3" />
+                      <BookOpen className="h-3 w-3 shrink-0" />
                       <span>{tx('Buka', 'Open')}</span>
                     </Link>
                   </div>
@@ -1184,8 +1184,8 @@ export function DashboardPage() {
         </section>
 
         {/* 6. DEEP ESPRESSO BROWN CTA BANNER (#432319) */}
-        <section className="relative overflow-hidden rounded-[32px] bg-[#432319] px-6 py-10 sm:px-10 sm:py-12 text-white shadow-lg">
-          <div className="grid items-center gap-8 lg:grid-cols-12">
+        <section className="relative overflow-hidden rounded-[28px] sm:rounded-[32px] bg-[#432319] px-5 py-8 sm:px-10 sm:py-12 text-white shadow-lg min-w-0">
+          <div className="grid items-center gap-8 lg:grid-cols-12 min-w-0">
             <div className="hidden lg:flex lg:col-span-4 items-center justify-center">
               <div className="h-20 w-20 rounded-l-full bg-[#4EA674]" />
               <div className="-ml-3 flex flex-col gap-2.5">
@@ -1198,7 +1198,7 @@ export function DashboardPage() {
               </div>
             </div>
 
-            <div className="lg:col-span-8 space-y-3">
+            <div className="lg:col-span-8 space-y-3 min-w-0">
               <h2 className="text-xl sm:text-2xl font-extrabold leading-snug text-white">
                 {tx(
                   'Eksplorasi modul belajar terbaru & bergabung di komunitas',

@@ -701,7 +701,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </header>
 
           {/* Main Workspace Body */}
-          <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
+          <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 overflow-y-auto overflow-x-hidden">
             {children}
 
             {/* InsightPod-Styled Footer Inside Workspace */}
