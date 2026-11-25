@@ -135,7 +135,10 @@ export function ProfileSettingsPage() {
       await refreshUser();
       setFeedback({
         type: 'success',
-        message: 'Profil dan Learning Preferences berhasil diperbarui.'
+        message: tx(
+          'Profil dan Learning Preferences berhasil diperbarui.',
+          'Profile and Learning Preferences updated successfully.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -143,7 +146,7 @@ export function ProfileSettingsPage() {
       } else {
         setFeedback({
           type: 'error',
-          message: 'Gagal memperbarui profil.'
+          message: tx('Gagal memperbarui profil.', 'Failed to update profile.')
         });
       }
     } finally {
@@ -158,7 +161,10 @@ export function ProfileSettingsPage() {
       setEmailVerified(true);
       setFeedback({
         type: 'success',
-        message: `Alamat email ${user?.email} telah terverifikasi.`
+        message: tx(
+          `Alamat email ${user?.email} telah terverifikasi.`,
+          `Email address ${user?.email} has been verified.`
+        )
       });
     }, 350);
   };
@@ -176,7 +182,7 @@ export function ProfileSettingsPage() {
       setNewPassword('');
       setFeedback({
         type: 'success',
-        message: 'Password akun berhasil diperbarui.'
+        message: tx('Password akun berhasil diperbarui.', 'Account password updated successfully.')
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -184,7 +190,7 @@ export function ProfileSettingsPage() {
       } else {
         setFeedback({
           type: 'error',
-          message: 'Gagal mengubah password.'
+          message: tx('Gagal mengubah password.', 'Failed to update password.')
         });
       }
     } finally {
@@ -198,12 +204,12 @@ export function ProfileSettingsPage() {
       await loadBlocks();
       setFeedback({
         type: 'success',
-        message: 'Blokir telah dibuka.'
+        message: tx('Blokir telah dibuka.', 'User has been unblocked.')
       });
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal membuka blokir.'
+        message: tx('Gagal membuka blokir.', 'Failed to unblock user.')
       });
     }
   };

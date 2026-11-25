@@ -57,7 +57,10 @@ export function AdminPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat data Admin Moderation Dashboard.'
+        message: tx(
+          'Gagal memuat data Admin Moderation Dashboard.',
+          'Failed to load Admin Moderation Dashboard data.'
+        )
       });
     } finally {
       setLoading(false);
@@ -91,7 +94,10 @@ export function AdminPage() {
       await loadAdmin();
       setFeedback({
         type: 'success',
-        message: `Status laporan berhasil diperbarui menjadi ${status}.`
+        message: tx(
+          `Status laporan berhasil diperbarui menjadi ${status}.`,
+          `Report status updated to ${status}.`
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -108,8 +114,11 @@ export function AdminPage() {
       setFeedback({
         type: 'success',
         message: nextActive
-          ? 'Akun pengguna berhasil diaktifkan kembali.'
-          : 'Akun pengguna telah ditangguhkan (Suspended).'
+          ? tx('Akun pengguna berhasil diaktifkan kembali.', 'User account has been reactivated.')
+          : tx(
+              'Akun pengguna telah ditangguhkan (Suspended).',
+              'User account has been suspended.'
+            )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -141,7 +150,10 @@ export function AdminPage() {
       await loadAdmin();
       setFeedback({
         type: 'success',
-        message: `Skill kanonis "${created.data.name}" berhasil ditambahkan ke katalog platform.`
+        message: tx(
+          `Skill kanonis "${created.data.name}" berhasil ditambahkan ke katalog platform.`,
+          `Canonical skill "${created.data.name}" added to the platform catalog.`
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -161,7 +173,10 @@ export function AdminPage() {
       await refreshUser();
       setFeedback({
         type: 'success',
-        message: `Skill "${skill.name}" berhasil dihapus dari Katalog Kanonis.`
+        message: tx(
+          `Skill "${skill.name}" berhasil dihapus dari Katalog Kanonis.`,
+          `Skill "${skill.name}" removed from the Canonical Catalog.`
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -169,7 +184,10 @@ export function AdminPage() {
       } else {
         setFeedback({
           type: 'error',
-          message: `Gagal menghapus skill "${skill.name}" dari katalog.`
+          message: tx(
+            `Gagal menghapus skill "${skill.name}" dari katalog.`,
+            `Failed to delete skill "${skill.name}" from the catalog.`
+          )
         });
       }
     } finally {

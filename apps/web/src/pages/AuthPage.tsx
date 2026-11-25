@@ -4,6 +4,7 @@ import { BookOpen, Eye, EyeOff } from 'lucide-react';
 import { COMMON_TIMEZONES, SUPPORTED_LANGUAGES } from '@skillloop/shared';
 import { api, ApiClientError } from '../lib/api';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const DEMO_ACCOUNTS = [
   {
@@ -41,6 +42,7 @@ const DEMO_ACCOUNTS = [
 export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
   const navigate = useNavigate();
   const { refreshUser } = useAuth();
+  const { tx } = useLanguage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,7 +69,12 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
     setErrorMessage(null);
 
     if (mode === 'register' && password !== confirmPassword) {
-      setErrorMessage('Konfirmasi password tidak cocok dengan password yang dimasukkan.');
+      setErrorMessage(
+        tx(
+          'Konfirmasi password tidak cocok dengan password yang dimasukkan.',
+          'Password confirmation does not match the entered password.'
+        )
+      );
       return;
     }
 
@@ -94,7 +101,9 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
         const detailMsg = err.details?.[0]?.message;
         setErrorMessage(detailMsg ? `${err.message} (${detailMsg})` : err.message);
       } else {
-        setErrorMessage('Gagal memproses autentikasi.');
+        setErrorMessage(
+          tx('Gagal memproses autentikasi.', 'Failed to process authentication.')
+        );
       }
     } finally {
       setSubmitting(false);
@@ -115,7 +124,9 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
       if (err instanceof ApiClientError) {
         setErrorMessage(err.message);
       } else {
-        setErrorMessage('Gagal masuk dengan akun demo.');
+        setErrorMessage(
+          tx('Gagal masuk dengan akun demo.', 'Failed to sign in with demo account.')
+        );
       }
     } finally {
       setSubmitting(false);

@@ -68,7 +68,7 @@ export function SkillsPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat katalog skill.'
+        message: tx('Gagal memuat katalog skill.', 'Failed to load skill catalog.')
       });
     } finally {
       setLoading(false);
@@ -110,9 +110,14 @@ export function SkillsPage() {
       await refreshUser();
       setFeedback({
         type: 'success',
-        message: `Skill berhasil ditambahkan ke daftar ${
-          role === 'TEACH' ? 'Skills I Can Teach' : 'Skills I Want to Learn'
-        }.`
+        message: tx(
+          `Skill berhasil ditambahkan ke daftar ${
+            role === 'TEACH' ? 'Skills I Can Teach' : 'Skills I Want to Learn'
+          }.`,
+          `Skill added to ${
+            role === 'TEACH' ? 'Skills I Can Teach' : 'Skills I Want to Learn'
+          }.`
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -120,7 +125,7 @@ export function SkillsPage() {
       } else {
         setFeedback({
           type: 'error',
-          message: 'Gagal menambahkan deklarasi skill.'
+          message: tx('Gagal menambahkan deklarasi skill.', 'Failed to add skill declaration.')
         });
       }
     } finally {
@@ -136,12 +141,12 @@ export function SkillsPage() {
       await refreshUser();
       setFeedback({
         type: 'success',
-        message: 'Deklarasi skill berhasil dihapus.'
+        message: tx('Deklarasi skill berhasil dihapus.', 'Skill declaration removed.')
       });
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal menghapus deklarasi skill.'
+        message: tx('Gagal menghapus deklarasi skill.', 'Failed to remove skill declaration.')
       });
     }
   };

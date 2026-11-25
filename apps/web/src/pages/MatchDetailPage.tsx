@@ -9,10 +9,12 @@ import { REPORT_CATEGORIES } from '@skillloop/shared';
 import { api, ApiClientError, ReciprocalMatchDto, UserReputationDto } from '../lib/api';
 import { RequestStatusBadge, SkillChip } from '../components/StatusBadge';
 import { CharacterPortrait } from '../components/CharacterPortraits';
+import { useLanguage } from '../context/LanguageContext';
 
 export function MatchDetailPage() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const { tx } = useLanguage();
 
   const [match, setMatch] = useState<ReciprocalMatchDto | null>(null);
   const [reputation, setReputation] = useState<UserReputationDto | null>(null);
@@ -61,7 +63,7 @@ export function MatchDetailPage() {
       if (err instanceof ApiClientError) {
         setError(err.message);
       } else {
-        setError('Gagal memuat detail kecocokan.');
+        setError(tx('Gagal memuat detail kecocokan.', 'Failed to load match details.'));
       }
     } finally {
       setLoading(false);
@@ -97,8 +99,10 @@ export function MatchDetailPage() {
       await loadMatchDetail();
       setActionFeedback({
         type: 'success',
-        message:
-          'Permintaan pertukaran & Exchange Agreement berhasil dikirim. Pantau status di menu Permintaan Tukar.'
+        message: tx(
+          'Permintaan pertukaran & Exchange Agreement berhasil dikirim. Pantau status di menu Permintaan Tukar.',
+          'Exchange request & agreement sent successfully. Track its status in Exchange Requests.'
+        )
       });
       setIntroMessage('');
       setLearningGoal('');
@@ -108,7 +112,10 @@ export function MatchDetailPage() {
       } else {
         setActionFeedback({
           type: 'error',
-          message: 'Gagal mengirim permintaan kolaborasi.'
+          message: tx(
+            'Gagal mengirim permintaan kolaborasi.',
+            'Failed to send collaboration request.'
+          )
         });
       }
     } finally {
@@ -119,7 +126,10 @@ export function MatchDetailPage() {
   const handleBlockUser = async () => {
     if (!match) return;
     const confirmed = window.confirm(
-      `Blokir ${match.user.displayName}? Anda tidak akan saling melihat di rekomendasi match.`
+      tx(
+        `Blokir ${match.user.displayName}? Anda tidak akan saling melihat di rekomendasi match.`,
+        `Block ${match.user.displayName}? You will no longer see each other in match recommendations.`
+      )
     );
     if (!confirmed) return;
 
@@ -129,7 +139,7 @@ export function MatchDetailPage() {
     } catch {
       setActionFeedback({
         type: 'error',
-        message: 'Gagal memblokir pengguna.'
+        message: tx('Gagal memblokir pengguna.', 'Failed to block user.')
       });
     }
   };
@@ -148,7 +158,10 @@ export function MatchDetailPage() {
       setReportDesc('');
       setActionFeedback({
         type: 'success',
-        message: 'Laporan telah diterima. Identitas pelapor dijaga kerahasiaannya.'
+        message: tx(
+          'Laporan telah diterima. Identitas pelapor dijaga kerahasiaannya.',
+          'Report received. Your identity is kept confidential.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {

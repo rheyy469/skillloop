@@ -36,7 +36,10 @@ export function CommunityPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat daftar Community Learning Groups.'
+        message: tx(
+          'Gagal memuat daftar Community Learning Groups.',
+          'Failed to load Community Learning Groups.'
+        )
       });
     } finally {
       setLoading(false);
@@ -79,7 +82,10 @@ export function CommunityPage() {
       await loadGroups();
       setFeedback({
         type: 'success',
-        message: 'Kelompok belajar komunitas baru berhasil dibuat!'
+        message: tx(
+          'Kelompok belajar komunitas baru berhasil dibuat!',
+          'New community study circle created successfully!'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {

@@ -54,7 +54,10 @@ export function RequestsPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat daftar exchange request.'
+        message: tx(
+          'Gagal memuat daftar exchange request.',
+          'Failed to load exchange requests.'
+        )
       });
     } finally {
       setLoading(false);
@@ -77,10 +80,13 @@ export function RequestsPage() {
         type: 'success',
         message:
           action === 'ACCEPT'
-            ? 'Exchange Agreement disepakati! Anda sekarang dapat menjadwalkan sesi belajar.'
+            ? tx(
+                'Exchange Agreement disepakati! Anda sekarang dapat menjadwalkan sesi belajar.',
+                'Exchange Agreement accepted! You can now schedule a learning session.'
+              )
             : action === 'REJECT'
-            ? 'Permintaan kolaborasi ditolak.'
-            : 'Permintaan kolaborasi dibatalkan.'
+            ? tx('Permintaan kolaborasi ditolak.', 'Collaboration request rejected.')
+            : tx('Permintaan kolaborasi dibatalkan.', 'Collaboration request cancelled.')
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -122,7 +128,10 @@ export function RequestsPage() {
       await loadRequests();
       setFeedback({
         type: 'success',
-        message: 'Counter Proposal berhasil dikirim ke partner.'
+        message: tx(
+          'Counter Proposal berhasil dikirim ke partner.',
+          'Counter Proposal sent to partner successfully.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -177,7 +186,10 @@ export function RequestsPage() {
       } else {
         setFeedback({
           type: 'error',
-          message: 'Gagal membuat proposal sesi belajar.'
+          message: tx(
+            'Gagal membuat proposal sesi belajar.',
+            'Failed to create learning session proposal.'
+          )
         });
       }
     } finally {

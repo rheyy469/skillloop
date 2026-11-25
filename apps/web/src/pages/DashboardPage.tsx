@@ -130,7 +130,12 @@ export function DashboardPage() {
       setData(res.data);
       await refreshNotifications();
     } catch {
-      setError('Gagal memuat ringkasan dashboard. Silakan coba lagi.');
+      setError(
+        tx(
+          'Gagal memuat ringkasan dashboard. Silakan coba lagi.',
+          'Failed to load dashboard overview. Please try again.'
+        )
+      );
     } finally {
       setLoading(false);
     }

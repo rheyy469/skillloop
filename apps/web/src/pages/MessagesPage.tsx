@@ -40,7 +40,10 @@ export function MessagesPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat percakapan pertukaran skill.'
+        message: tx(
+          'Gagal memuat percakapan pertukaran skill.',
+          'Failed to load skill exchange conversations.'
+        )
       });
     } finally {
       setLoading(false);
@@ -88,8 +91,14 @@ export function MessagesPage() {
 
   const handleReportMessage = async (messageId: string) => {
     const reason = window.prompt(
-      'Alasan melaporkan pesan ini ke tim moderasi:',
-      'Konten pesan tidak sesuai dengan etika belajar komunitas.'
+      tx(
+        'Alasan melaporkan pesan ini ke tim moderasi:',
+        'Reason for reporting this message to the moderation team:'
+      ),
+      tx(
+        'Konten pesan tidak sesuai dengan etika belajar komunitas.',
+        'Message content violates community learning guidelines.'
+      )
     );
     if (reason === null) return;
     try {
@@ -97,7 +106,10 @@ export function MessagesPage() {
       await loadThreads();
       setFeedback({
         type: 'success',
-        message: 'Pesan telah dilaporkan ke Admin Moderation Dashboard.'
+        message: tx(
+          'Pesan telah dilaporkan ke Admin Moderation Dashboard.',
+          'Message has been reported to the Admin Moderation Dashboard.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {

@@ -85,7 +85,10 @@ export function SessionsPage() {
     } catch {
       setFeedback({
         type: 'error',
-        message: 'Gagal memuat daftar sesi belajar dan progress.'
+        message: tx(
+          'Gagal memuat daftar sesi belajar dan progress.',
+          'Failed to load learning sessions and progress.'
+        )
       });
     } finally {
       setLoading(false);
@@ -104,8 +107,8 @@ export function SessionsPage() {
     let cancelReason: string | null = null;
     if (action === 'CANCEL') {
       const input = window.prompt(
-        'Alasan pembatalan sesi (opsional):',
-        'Jadwal bertabrakan, mari atur ulang.'
+        tx('Alasan pembatalan sesi (opsional):', 'Reason for cancelling session (optional):'),
+        tx('Jadwal bertabrakan, mari atur ulang.', 'Schedule conflict, let us reschedule.')
       );
       if (input === null) return;
       cancelReason = input;
@@ -121,10 +124,13 @@ export function SessionsPage() {
         type: 'success',
         message:
           action === 'CONFIRM'
-            ? 'Jadwal sesi berhasil dikonfirmasi.'
+            ? tx('Jadwal sesi berhasil dikonfirmasi.', 'Session schedule confirmed.')
             : action === 'COMPLETE'
-            ? 'Selamat! Sesi belajar telah ditandai selesai.'
-            : 'Sesi belajar telah dibatalkan.'
+            ? tx(
+                'Selamat! Sesi belajar telah ditandai selesai.',
+                'Great! Learning session marked as completed.'
+              )
+            : tx('Sesi belajar telah dibatalkan.', 'Learning session has been cancelled.')
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -150,7 +156,10 @@ export function SessionsPage() {
       await loadSessionsAndProgress();
       setFeedback({
         type: 'success',
-        message: 'Jadwal baru diusulkan dan menunggu konfirmasi partner.'
+        message: tx(
+          'Jadwal baru diusulkan dan menunggu konfirmasi partner.',
+          'New schedule proposed and awaiting partner confirmation.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -176,7 +185,10 @@ export function SessionsPage() {
       await loadSessionsAndProgress();
       setFeedback({
         type: 'success',
-        message: 'Feedback & rating berhasil dikirim.'
+        message: tx(
+          'Feedback & rating berhasil dikirim.',
+          'Feedback & rating submitted successfully.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
@@ -206,7 +218,10 @@ export function SessionsPage() {
       await loadSessionsAndProgress();
       setFeedback({
         type: 'success',
-        message: 'Milestone & catatan belajar berhasil disimpan.'
+        message: tx(
+          'Milestone & catatan belajar berhasil disimpan.',
+          'Milestone & learning notes saved successfully.'
+        )
       });
     } catch (err) {
       if (err instanceof ApiClientError) {
