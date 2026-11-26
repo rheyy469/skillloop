@@ -10,31 +10,36 @@ const DEMO_ACCOUNTS = [
   {
     name: 'Raka Pratama (Admin)',
     email: 'raka@demo.skillloop.id',
-    roleDesc: 'Hak Akses: Admin & Moderasi . Teach: JS & HTML/CSS ⇄ Learn: UI/UX & Figma',
+    roleDescId: 'Hak Akses: Admin & Moderasi . Teach: JS & HTML/CSS ⇄ Learn: UI/UX & Figma',
+    roleDescEn: 'Role: Admin & Moderation . Teach: JS & HTML/CSS ⇄ Learn: UI/UX & Figma',
     badgeColor: 'bg-[#EE7838] text-white'
   },
   {
     name: 'Naya Putri',
     email: 'naya@demo.skillloop.id',
-    roleDesc: 'Hak Akses: Member . Teach: UI/UX & Figma ⇄ Learn: JS & HTML/CSS',
+    roleDescId: 'Hak Akses: Member . Teach: UI/UX & Figma ⇄ Learn: JS & HTML/CSS',
+    roleDescEn: 'Role: Member . Teach: UI/UX & Figma ⇄ Learn: JS & HTML/CSS',
     badgeColor: 'bg-[#4EA674] text-white'
   },
   {
     name: 'Dimas Aditya',
     email: 'dimas@demo.skillloop.id',
-    roleDesc: 'Hak Akses: Member . Teach: HTML/CSS & Pitching ⇄ Learn: Figma',
+    roleDescId: 'Hak Akses: Member . Teach: HTML/CSS & Pitching ⇄ Learn: Figma',
+    roleDescEn: 'Role: Member . Teach: HTML/CSS & Pitching ⇄ Learn: Figma',
     badgeColor: 'bg-[#F6C945] text-[#3D2317]'
   },
   {
     name: 'Alya Rahma',
     email: 'alya@demo.skillloop.id',
-    roleDesc: 'Hak Akses: Member . Teach: Python & SQL ⇄ Learn: React & JS',
+    roleDescId: 'Hak Akses: Member . Teach: Python & SQL ⇄ Learn: React & JS',
+    roleDescEn: 'Role: Member . Teach: Python & SQL ⇄ Learn: React & JS',
     badgeColor: 'bg-[#F4979C] text-[#3D2317]'
   },
   {
     name: 'Farhan Akbar',
     email: 'farhan@demo.skillloop.id',
-    roleDesc: 'Hak Akses: Member . Teach: React & TS ⇄ Learn: Python & SQL',
+    roleDescId: 'Hak Akses: Member . Teach: React & TS ⇄ Learn: Python & SQL',
+    roleDescEn: 'Role: Member . Teach: React & TS ⇄ Learn: Python & SQL',
     badgeColor: 'bg-[#74A8F2] text-white'
   }
 ];
@@ -143,12 +148,20 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
               <span>SkillLoop Account</span>
             </span>
             <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[#3D2317]">
-              {mode === 'login' ? 'Masuk ke SkillLoop' : 'Buat Akun Pertukaran Baru'}
+              {mode === 'login'
+                ? tx('Masuk ke SkillLoop', 'Sign In to SkillLoop')
+                : tx('Buat Akun Pertukaran Baru', 'Create a New Exchange Account')}
             </h1>
             <p className="mt-1 text-xs text-[#8C7A70]">
               {mode === 'login'
-                ? 'Kelola pertukaran skill dua arah dan jadwal sesi belajar Anda.'
-                : 'Daftarkan keahlian yang ingin Anda ajarkan dan pelajari.'}
+                ? tx(
+                    'Kelola pertukaran skill dua arah dan jadwal sesi belajar Anda.',
+                    'Manage your two-way skill exchanges and learning schedule.'
+                  )
+                : tx(
+                    'Daftarkan keahlian yang ingin Anda ajarkan dan pelajari.',
+                    'Declare the skills you can teach and want to learn.'
+                  )}
             </p>
           </div>
 
@@ -168,7 +181,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   htmlFor="displayName"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Nama Tampilan
+                  {tx('Nama Tampilan', 'Display Name')}
                 </label>
                 <input
                   id="displayName"
@@ -178,7 +191,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   maxLength={80}
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Nama Lengkap"
+                  placeholder={tx('Nama Lengkap', 'Full Name')}
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none focus:ring-2 focus:ring-[#F6C945]"
                 />
               </div>
@@ -189,7 +202,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                 htmlFor="email"
                 className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
               >
-                Alamat Email
+                {tx('Alamat Email', 'Email Address')}
               </label>
               <input
                 id="email"
@@ -197,7 +210,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@email.com"
+                placeholder={tx('nama@email.com', 'you@example.com')}
                 className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none focus:ring-2 focus:ring-[#F6C945]"
               />
             </div>
@@ -217,13 +230,21 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   minLength={mode === 'register' ? 8 : 1}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={mode === 'register' ? 'Minimal 8 karakter' : 'Password Anda'}
+                  placeholder={
+                    mode === 'register'
+                      ? tx('Minimal 8 karakter', 'Minimum 8 characters')
+                      : tx('Password Anda', 'Your password')
+                  }
                   className="w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 pr-11 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none focus:ring-2 focus:ring-[#F6C945]"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Sembunyikan password' : 'Lihat password'}
+                  aria-label={
+                    showPassword
+                      ? tx('Sembunyikan password', 'Hide password')
+                      : tx('Lihat password', 'Show password')
+                  }
                   className="absolute right-3.5 top-2.5 rounded-lg p-1 text-[#8C7A70] hover:text-[#3D2317]"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -237,7 +258,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   htmlFor="confirmPassword"
                   className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                 >
-                  Konfirmasi Password
+                  {tx('Konfirmasi Password', 'Confirm Password')}
                 </label>
                 <input
                   id="confirmPassword"
@@ -246,7 +267,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   minLength={8}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Ketik ulang password"
+                  placeholder={tx('Ketik ulang password', 'Re-enter your password')}
                   className="mt-1.5 w-full rounded-2xl bg-[#FAF1E6] px-4 py-3 text-xs font-medium text-[#3D2317] placeholder-[#8C7A70] focus:outline-none focus:ring-2 focus:ring-[#F6C945]"
                 />
               </div>
@@ -259,7 +280,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                     htmlFor="timezone"
                     className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]"
                   >
-                    Zona Waktu (IANA)
+                    {tx('Zona Waktu (IANA)', 'Timezone (IANA)')}
                   </label>
                   <select
                     id="timezone"
@@ -277,7 +298,7 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
 
                 <div>
                   <span className="block text-[11px] font-extrabold uppercase tracking-wider text-[#3D2317]">
-                    Bahasa Komunikasi
+                    {tx('Bahasa Komunikasi', 'Communication Languages')}
                   </span>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {SUPPORTED_LANGUAGES.map((lang) => {
@@ -309,10 +330,10 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
             >
               <span>
                 {submitting
-                  ? 'Memproses...'
+                  ? tx('Memproses...', 'Processing...')
                   : mode === 'login'
-                  ? 'Masuk Sekarang'
-                  : 'Daftar Akun'}
+                  ? tx('Masuk Sekarang', 'Sign In Now')
+                  : tx('Daftar Akun', 'Create Account')}
               </span>
               <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-[#3D2317]">
                 <BookOpen className="h-3 w-3" />
@@ -323,22 +344,22 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
           <div className="mt-6 border-t border-[#3D2317]/10 pt-4 text-center text-xs text-[#8C7A70]">
             {mode === 'login' ? (
               <>
-                Belum punya akun?{' '}
+                {tx('Belum punya akun?', "Don't have an account?")}{' '}
                 <Link
                   to="/register"
                   className="font-extrabold text-[#EE7838] hover:underline"
                 >
-                  Daftar di sini
+                  {tx('Daftar di sini', 'Sign up here')}
                 </Link>
               </>
             ) : (
               <>
-                Sudah punya akun?{' '}
+                {tx('Sudah punya akun?', 'Already have an account?')}{' '}
                 <Link
                   to="/login"
                   className="font-extrabold text-[#EE7838] hover:underline"
                 >
-                  Masuk di sini
+                  {tx('Masuk di sini', 'Sign in here')}
                 </Link>
               </>
             )}
@@ -350,13 +371,16 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
           <div>
             <div className="inline-flex items-center gap-1.5 rounded-full bg-[#F6C945] px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-[#3D2317]">
               <BookOpen className="h-3 w-3" />
-              <span>Demo Persona . 1-Klik</span>
+              <span>{tx('Demo Persona . 1-Klik', 'Demo Persona . 1-Click')}</span>
             </div>
             <h2 className="mt-2.5 text-xl font-extrabold text-white">
-              Uji Langsung Reciprocal Match
+              {tx('Uji Langsung Reciprocal Match', 'Try Reciprocal Matching Instantly')}
             </h2>
             <p className="mt-1 text-xs text-white/75 leading-relaxed">
-              Pilih salah satu akun simulasi di bawah untuk langsung masuk tanpa mengetik password.
+              {tx(
+                'Pilih salah satu akun simulasi di bawah untuk langsung masuk tanpa mengetik password.',
+                'Pick any demo account below to sign in instantly without typing a password.'
+              )}
             </p>
           </div>
 
@@ -374,10 +398,12 @@ export function AuthPage({ mode }: { mode: 'login' | 'register' }) {
                   <span
                     className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-extrabold ${acc.badgeColor}`}
                   >
-                    Masuk 1-Klik
+                    {tx('Masuk 1-Klik', '1-Click Sign In')}
                   </span>
                 </div>
-                <p className="mt-1 text-[11px] opacity-80">{acc.roleDesc}</p>
+                <p className="mt-1 text-[11px] opacity-80">
+                  {tx(acc.roleDescId, acc.roleDescEn)}
+                </p>
               </button>
             ))}
           </div>
